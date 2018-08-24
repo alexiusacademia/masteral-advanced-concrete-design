@@ -18,6 +18,7 @@ Moment-Curvature relationship curve of a reinforced concrete beam of different c
 | ------------------------------- | -------- | ---- |
 | f'c                             | 21       | MPa  |
 | fy                              | 275      | MPa  |
+| fr = 0.7 $\sqrt{f'c}$           | 3.208    | MPa  |
 | Es                              | 200,000  | MPa  |
 | Ec =  (4,700$ \sqrt{f'c} $)     | 21538.10 | MPa  |
 | β~1~                            | 0.85     |      |
@@ -55,13 +56,121 @@ As a general solution to the problem, analysis as doubly reinforced beam is appl
       | $ As'(transformed) = (\eta - 1) As' $                        | 18,808.62 $ mm^2 $ |
       | By taking moment of areas of concrete and steel to topmost fiber: |                    |
       | $ kd $                                                       | 242.19 $mm$        |
-      | $I~c~$                                                       | $3.949x10^9 mm^4$  |
-      |                                                              |                    |
-      |                                                              |                    |
-      |                                                              |                    |
 
-      For compression, $ As'(transformed) = (\eta -  1)As' $
+   2. Calculation of $M~cr~$ and $\phi~cr~$
 
+      | Particulars                          | Calculated Values     |
+      | ------------------------------------ | --------------------- |
+      | $I~cr~$                              | $3.949x10^9 mm^4$     |
+      | $ Mcr = fr  \dfrac {Icr}{h - kd} $   | $ 60.97 x 10^6 kN-m $ |
+      | $\phi cr = \frac{fr}{Ec * (h - kd)}$ | $ 7.167e-07 rad/mm$   |
+
+   3. Calculate the curvature $\phi c$ right after cracking
+
+      The neutral axis will shift after the crack, so taking moment of area for transformed steel in tension ($\eta As$) and compression ($(\eta-1)As$) and concrete at the compressive area into the neutral axis:
+      $$
+      b \cdot kd \cdot \frac{kd}{2} + (\eta-1)As' \cdot (kd-d') = \eta As \cdot (d-kd)
+      $$
+
+      | Particulars                 | Calculated Values   |
+      | --------------------------- | ------------------- |
+      | $kd$                        | 196.76 $mm$         |
+      | $Ic~(after crack)~$         | $2.908x10^9 mm^4$   |
+      | $ϕc = \dfrac{Mcr}{Ec * Ic}$ | $ 9.733e-07 rad/mm$ |
+
+   #### Stage 2 : Concrete compression yield at ($fc = 0.5f'c$)
+
+   At this stage, compression block is still assumed linear and so can be represented by a triangular shape as shown. 
+
+   ![Concrete Stress Block Linear](D:\Personal\Masteral\AdvancedConcreteDesign\Notebooks\Problem Set 1\Concrete Stress Block Linear.svg)
+
+   By equilibrium, $C = T$
+   $$
+   \frac{1}{2} fc \cdot kd \cdot b  + (As - As')fs = As' \cdot fs
+   $$
+   Solving kd using quadratic formula,  $ kd = 194.03mm $
+
+   By deriving from the **Strain Diagram** above, we get:
+   $$
+   fs = Es \cdot ⲉc \cdot \dfrac{d - kd}{kd}
+   $$
+
+   $$
+   fs' = Es \cdot ⲉc \cdot \dfrac{kd - d'}{kd}
+   $$
+
+   After this, $fs$ and $fs'$ are compared to $fy$, if  any of them is greater than $fy$, steel yields and, so use $fs = fy$ or $fs' = fy$ correspondingly is solving for Moments.
+
+
+
+	Moment can now be solved by taking moment to tension steel:
+$$
+Mc = \dfrac{1}{2} \cdot fc kd \cdot b \cdot (d - \dfrac{kd}{3}) + As' fs (d - d')
+$$
+
+
+| Particulars    | Calculated Values      |
+| -------------- | ---------------------- |
+| $fc = 0.5 f'c$ | $10.50 MPa$            |
+| $fs$           | $103.50 MPa$           |
+| $fs'$          | $72.37 MPa$            |
+| $Mc$           | $ 159.98 x 10^6 kN-m $ |
+| $ϕc$           | $ 2.512e-07 rad/mm$    |
+
+
+
+#### Stage 3 : Inelastic Stage
+
+At this stage, compression block is no longer triangular, concrete modulus of elasticity is also no longer constant.
+
+![](D:\Personal\Masteral\AdvancedConcreteDesign\Notebooks\Problem Set 1\Concrete Stress Block NonLinear.svg)
+
+Solving for the moment and curvature is divided into two (2) more stages:
+
+1. $0 < \epsilon c < \epsilon o$
+2. $\epsilon o < \epsilon c < \epsilon cu$
+
+Calculation inside these stages are almost the same except for the calculations of factors such as $k2$, $Lo$ and $fc$: 
+
+1. First, $fs$ and $fs'$ are assumed to yield, so to solve for $kd$ using equilibrium:
+   $$
+   C = T
+   $$
+
+   $$
+   Lo \cdot fc \cdot kd \cdot b = (As - As') \cdot fy
+   $$
+
+   $$
+   kd = (As - As') \cdot \frac{fy}{Lo \cdot fc \cdot b}
+   $$
+
+2. Now, steel stresses $fs$ and $fs'$ are computed using the calculated $kd$ with equations (3) and (4) respectively then compares them to $fy$:
+
+   a. If $fs > fy$:
+
+   	This means steel yields at tension. We then test:
+
+   	a.1. if $fs' > fy$:
+
+   		Since the assumption that steel in compression and tension yields, 
+
+   		we accept the calculated 	value of $kd$ then proceeds with $fs = fy$ and $fs' = fy$.
+
+   	a.2. if $fs' < fy$:
+
+   		Instead of both $As$ and $As'$ multiplying to $fy$ in equation (7), we multiply $As'$ by $fs'$ 
+
+   		in equation (4), thus
+   $$
+   Lo \cdot fc \cdot kd \cdot b = Asfy - As'fs'
+   $$
+
+   $$
+   Lo \cdot fc \cdot kd \cdot b = Asfy - As'\cdot Es \cdot ⲉc \cdot \dfrac{kd - d'}{kd}
+   $$
+
+3. dfgsfd
 
 ```python
 # Imports
