@@ -30,6 +30,16 @@ Moment-Curvature relationship curve of a reinforced concrete beam of different c
 
 
 
+
+
+
+
+
+
+
+
+
+
 ### II. Solutions / Methodology
 
 ------
@@ -103,9 +113,9 @@ As a general solution to the problem, analysis as doubly reinforced beam is appl
 
 
 
-	Moment can now be solved by taking moment to tension steel:
+   Moment can now be solved by taking moment to tension steel:
 $$
-Mc = \dfrac{1}{2} \cdot fc kd \cdot b \cdot (d - \dfrac{kd}{3}) + As' fs (d - d')
+Mc = \dfrac{1}{2} \cdot fc \cdot kd \cdot b \cdot (d - \dfrac{kd}{3}) + As'\cdot fs' (d - d')
 $$
 
 
@@ -128,7 +138,10 @@ At this stage, compression block is no longer triangular, concrete modulus of el
 Solving for the moment and curvature is divided into two (2) more stages:
 
 1. $0 < \epsilon c < \epsilon o$
-2. $\epsilon o < \epsilon c < \epsilon cu$
+
+2. $\epsilon o < \epsilon c < 0.003$
+
+   wherein we iterate in the value of $\epsilon c$
 
 Calculation inside these stages are almost the same except for the calculations of factors such as $k2$, $Lo$ and $fc$: 
 
@@ -149,19 +162,17 @@ Calculation inside these stages are almost the same except for the calculations 
 
    a. If $fs > fy$:
 
-   	This means steel yields at tension. We then test:
+   This means steel yields at tension. We then test:
 
-   	a.1. if $fs' > fy$:
+   a.1. if $fs' > fy$:
+   Since the assumption that steel in compression and tension yields, 
+   we accept the calculated 	value of $kd$ then proceeds with $fs = fy$ and $fs' = fy$.
 
-   		Since the assumption that steel in compression and tension yields, 
+   a.2. if $fs' < fy$:
 
-   		we accept the calculated 	value of $kd$ then proceeds with $fs = fy$ and $fs' = fy$.
+   Instead of both $As$ and $As'$ multiplying to $fy$ in equation (7), we multiply $As'$ by $fs'$ 
 
-   	a.2. if $fs' < fy$:
-
-   		Instead of both $As$ and $As'$ multiplying to $fy$ in equation (7), we multiply $As'$ by $fs'$ 
-
-   		in equation (4), thus
+   in equation (4), thus
    $$
    Lo \cdot fc \cdot kd \cdot b = Asfy - As'fs'
    $$
@@ -170,11 +181,211 @@ Calculation inside these stages are almost the same except for the calculations 
    Lo \cdot fc \cdot kd \cdot b = Asfy - As'\cdot Es \cdot ⲉc \cdot \dfrac{kd - d'}{kd}
    $$
 
-3. dfgsfd
+   $kd$ can now be recalculated using quadratic formula, then $fs'$ based on the new calculated $kd$
+
+   b. if $fs < fy$:
+
+   Now, assume the steel at compression yields, $fs' = fy$, we now then get re-write equation (9):
+   $$
+   Lo \cdot fc \cdot kd \cdot b = As\cdot fs - As'fy
+   $$
+
+   $$
+   Lo \cdot fc \cdot kd \cdot b = As\cdot Es \cdot ⲉc \cdot \dfrac{d - kd}{kd} - As'fy
+   $$
+
+   We now recalculate $kd$ using the quadratic equation above.
+
+   After calculating $kd$, we might want to check $fs'$ again if compression steel yields to check if assumption in equation (13) is correct. If not, we just replace $fy$ in equation (12) with equation (4) then recalculate $kd$.
+
+   $fs$ and $fs'$ can now be recalculated based on the new $kd$.
+
+3. After getting the stresses in steel, we can now solve for moment by taking moment at the tension steel
+   $$
+   Mc = Lo \cdot fc \cdot kd \cdot b \cdot (d - k2 \cdot kd) + As'\cdot fs'\cdot (d - d')
+   $$
+
+4. For the curvature, $\phi c$
+   $$
+   $\phi c = \epsilon c / kd
+   $$
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+### III. Results / Charts
+
+---
+
+Following is the result of the run of the script for the problem in all three (3) cases:
+
+##### Case 1
+
+| Moment ($kN \cdot m$)   | $\phi c$ (rad/mm) | $\epsilon c$ | Tension Steel Yield | Compression Steel Yield |
+| ----------------------- | ----------------- | ------------ | ------------------- | ----------------------- |
+| 54.57                   | 7.9703e-07        |              |                     |                         |
+| 54.57                   | 1.0428e-06        |              |                     |                         |
+| 114.39                  | 2.1859e-06        | 0.00048      |                     |                         |
+| ***For 0 < ⲉc < ⲉo***   |                   |              |                     |                         |
+| 153.69                  | 3.95e-06          | 0.00103      | False               | False                   |
+| 187.86                  | 4.76e-06          | 0.00123      | False               | False                   |
+| 216.42                  | 5.52e-06          | 0.00143      | False               | False                   |
+| 237.47                  | 6.23e-06          | 0.00163      | False               | False                   |
+| ***For ⲉo < ⲉc < ⲉcu*** |                   |              |                     |                         |
+| 259.5                   | 7.3e-06           | 0.00196      | False               | True                    |
+| 269.74                  | 7.93e-06          | 0.00216      | False               | True                    |
+| 278.35                  | 8.54e-06          | 0.00236      | False               | True                    |
+| 285.68                  | 9.14e-06          | 0.00256      | False               | True                    |
+| 292.0                   | 9.73e-06          | 0.00276      | False               | True                    |
+| 297.51                  | 1.032e-05         | 0.00296      | False               | True                    |
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+##### Case 2
+
+| Moment ($kN \cdot m$)   | $\phi c$ (rad/mm) | $\epsilon c$ | Tension Steel Yield | Compression Steel Yield |
+| ----------------------- | ----------------- | ------------ | ------------------- | ----------------------- |
+| 43.86                   | 7.315e-07         |              |                     |                         |
+| 43.86                   | 1.270e-06         |              |                     |                         |
+| 95.07                   | 2.754e-06         | 0.00048      |                     |                         |
+| ***For 0 < ⲉc < ⲉo***   |                   |              |                     |                         |
+| 132.65                  | 4.82e-06          | 0.00103      | False               | False                   |
+| 161.97                  | 5.83e-06          | 0.00123      | False               | False                   |
+| 186.87                  | 6.76e-06          | 0.00143      | False               | False                   |
+| 201.24                  | 7.85e-06          | 0.00163      | True                | False                   |
+| ***For ⲉo < ⲉc < ⲉcu*** |                   |              |                     |                         |
+| 203.58                  | 1.024e-05         | 0.00196      | True                | True                    |
+| 204.35                  | 1.17e-05          | 0.00216      | True                | True                    |
+| 204.89                  | 1.316e-05         | 0.00236      | True                | True                    |
+| 205.27                  | 1.462e-05         | 0.00256      | True                | True                    |
+| 205.55                  | 1.608e-05         | 0.00276      | True                | True                    |
+| 205.76                  | 1.754e-05         | 0.00296      | True                | True                    |
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+##### Case 3
+
+| Moment ($kN \cdot m$)   | $\phi c$ (rad/mm) | $\epsilon c$ | Tension Steel Yield | Compression Steel Yield |
+| ----------------------- | ----------------- | ------------ | ------------------- | ----------------------- |
+| 60.97                   | 7.167e-07         |              |                     |                         |
+| 60.97                   | 9.733e-07         |              |                     |                         |
+| 159.98                  | 2.512e-06         | 0.00048      |                     |                         |
+| ***For 0 < ⲉc < ⲉo***   |                   |              |                     |                         |
+| 260.98                  | 4.72e-06          | 0.00103      | False               | False                   |
+| 315.58                  | 5.67e-06          | 0.00123      | False               | False                   |
+| 365.39                  | 6.58e-06          | 0.00143      | False               | False                   |
+| 414.18                  | 7.27e-06          | 0.00163      | True                | False                   |
+| ***For ⲉo < ⲉc < ⲉcu*** |                   |              |                     |                         |
+| 422.07                  | 1.024e-05         | 0.00196      | True                | True                    |
+| 422.84                  | 1.17e-05          | 0.00216      | True                | True                    |
+| 423.37                  | 1.316e-05         | 0.00236      | True                | True                    |
+| 423.75                  | 1.462e-05         | 0.00256      | True                | True                    |
+| 424.03                  | 1.608e-05         | 0.00276      | True                | True                    |
+| 424.25                  | 1.754e-05         | 0.00296      | True                | True                    |
+
+
+
+![output_4_0](D:\Personal\Masteral\AdvancedConcreteDesign\Notebooks\Problem Set 1\output_4_0.png)
+
+
+
+### IV. Comments
+
+---
+
+Following are comments and findings in this problem set.
+
+- The first that I find here is in the chart above, the curve for **Case 1**. It can be seen that it has the smallest curvature. Compared to the curve of **Case 2** which has a smallest amount of tensile reinforcement, shows a gradual change in Moment/Load with a high degree of visibility in change in curvature. The same goes to **Case 3**. This indicates, in my opinion, that they shows ductile behavior. The beams shows a large change in curvature which can be relate to the beams deflection (the larger the angle of curvature, the larger the deflection) while the beam at case 1 shows a brittle behavior. The beam reached its allowable strain of 0.003 in concrete without much change in curvature relative to load. 
+
+- Following the 1st comment, if we look at the table in the Results section at Case 1, we can see that the tensile reinforcements did not yield until the beam failed. This could be the reason why we avoid to have a balanced design or even an over reinforced design for that matter.
+
+- After the elastic stage, I also noticed the change in slope in the range of $\epsilon c < \epsilon o$. The slope goes steeper and steeper until $ \epsilon c $  approaches  $\epsilon o$ and then it abruptly goes almost flat. I'm not sure if this though if this is what's called the *strain hardening* before the crushing of concrete at failure.
+
+- Lastly is the comparison of calculated moment at $fc = 0.5 f'c$ from that computed at yield point using triangular stress block (*end of elastic stage*) and that of computing it using PCA stress block (*considering inelastic stage*). In the figure at the result above, I started the $\epsilon c$ iteration way far ahead of calculated strain ($\epsilon$~0.5f'c~). The moment calculated using inelastic approach is less than of that computed using elastic approach at $fc = 0.5 f'c$ as shown below (for Case 1 and Case 2).
+
+  ![](D:\Personal\Masteral\AdvancedConcreteDesign\Notebooks\Problem Set 1\output_4_1.png)
+
+
+
+### V. Appendix
+
+---
+
+##### References
+
+- Gillesania, DI T., *Simplified Reinforced Concrete Design*, Diego Innocencio Tapang Guillesania, 2013
+- Ćurić, I., Radić, J., Franetović, M., *DETERMINATION OF THE BENDING MOMENT – CURVATURE RELATIONSHIP FOR REINFORCED CONCRETE HOLLOW SECTION BRIDGE COLUMNS*, n.d.
+- American Concrete Institute, *Building Code Requirements for Structural Concrete (ACI 318-95) and Commentary (ACI 318R-95)*, 1995
+- Nilson, A. H., Darwin, D., Dolan, C. W., *Design of Concrete Structures 14th ed.*, McGraw-Hill, 2010, Retrieved from http://www.engineeringbookspdf.com
+
+
+
+
+
+##### Source Code
+
+The programming language used in this problem set is **Python3** with the help of **Jupyter Notebook** for presenting the data. The full source code used is shown below. This source code is also available at github (https://github.com/alexiusacademia/masteral-advanced-concrete-design/blob/master/Notebooks/Problem%20Set%201.ipynb)
 
 ```python
 # Imports
-from sympy import *
 import math
 import matplotlib.pyplot as plt
 
@@ -229,9 +440,6 @@ for i in range(3):
     ϕ[i].append(0.0)
 
 for i in range(3):
-    print('=======================================')
-    print('Case No.', i+1)
-    print('=======================================')
     # =========================================== #
     # Calculation before cracking                 #
     # =========================================== #
@@ -259,7 +467,6 @@ for i in range(3):
     # Calculate the curvature
     ϕc = fr / (Ec * (h - kdCalculated))                 # Curvature right before cracking
     ϕ[i].append(ϕc)                                     # Insert to list of ϕ
-    print('Mcr = ', round(Mcr / 1000**2, 2), 'ϕc = ', ϕc, 'kd = ', kdCalculated)
     
     # =========================================== #
     # Calculation after cracking                  #
@@ -285,7 +492,6 @@ for i in range(3):
     
     M[i].append(Mcr)
     ϕ[i].append(ϕc)
-    print('Mcr = ', round(Mcr / 1000**2, 2), 'ϕc = ', ϕc, 'kd = ', kdCalculated, "After cracking...")
     
     # =========================================== #
     # Calculation at yield point                  #
@@ -313,7 +519,6 @@ for i in range(3):
     
     M[i].append(Mc)
     ϕ[i].append(ϕc)
-    print('Myield = ', round(Mc / 1000**2, 2), 'ϕc = ', ϕc, 'ⲉc = ', ⲉc, 'kd = ', kdCalculated)
     
     yield_pts.append((ϕc*1000, Mc / 1000**2))
     
@@ -321,14 +526,14 @@ for i in range(3):
     # Calculation at inelastic behaviour          #
     # =========================================== #
     # Calculate for ⲉo
-    ⲉo = 2 * 0.85 * fcprime / Ec
+    ⲉo = 2 * 0.85 * fcprime / Ec		# This is overridden below
     
     # Iterator increment
     iterator_increment = 0.0002
     
     # For 0 < ⲉc < ⲉo
-    ⲉc = 0.5 * ⲉo                                          # My setting for starting strain iteration
-    print('For 0 < ⲉc < ⲉo')
+    ⲉc = 0.5 * ⲉo                       # To override above ⲉo
+
     # For case 0 < ⲉc < ⲉo
     while (ⲉc + iterator_increment) <= ⲉo:
         ⲉc = ⲉc + iterator_increment
@@ -351,15 +556,12 @@ for i in range(3):
                 kdCalculated = (-1 * qb + math.sqrt(qd)) / (2 * qa)
                 fs = (Es * ⲉc) * (d - kdCalculated) / kdCalculated
                 fsPrime = Es * ⲉc / kdCalculated * (kdCalculated - d_prime)
-                print('Tension steel yields but compression steel did not.')
             else:
                 # fs and fs' > fy
                 kdCalculated = (As[i] - AsPrime[i]) * fy / (Lo * fc * b)
                 fs = fy
                 fsPrime = fy
-                print('Both tension and compression steel yields.')
         else:
-            print('Tension steel did not yield.')
             qa = Lo * fc * b
             qb = AsPrime[i] * fy + As[i] * Es * ⲉc
             qc = -As[i] * Es * ⲉc * d
@@ -367,6 +569,17 @@ for i in range(3):
             kdCalculated = (-1 * qb + math.sqrt(qd)) / (2 * qa)
             fs = (Es * ⲉc) * (d - kdCalculated) / kdCalculated
             fsPrime = Es * ⲉc / kdCalculated * (kdCalculated - d_prime)
+            
+            if fsPrime < fy:
+                # Compression syeel did not yield
+                # Compression steel does not yields
+                qa = Lo * fc * b
+                qb = (Es * ⲉc) * (AsPrime[i] + As[i])
+                qc = -(Es * ⲉc) * (As[i] * d + AsPrime[i] * d_prime)
+                qd = (qb**2) - (4 * qa * qc)           # Discriminant
+                kdCalculated = (-1 * qb + math.sqrt(qd)) / (2 * qa)
+                fs = (Es * ⲉc) * (d - kdCalculated) / kdCalculated
+                fsPrime = Es * ⲉc / kdCalculated * (kdCalculated - d_prime)
         
         Mc = Lo * fc * b * kdCalculated * (d - k2 * kdCalculated) +\
                 AsPrime[i] * fsPrime * (d - d_prime)
@@ -375,9 +588,6 @@ for i in range(3):
         M[i].append(Mc)
         ϕ[i].append(ϕc)
         
-        print('Mc = ', round(Mc / 1000**2, 2), 'ϕc = ', round(ϕc, 8), 'ⲉc = ', round(ⲉc, 5), 'kd = ', round(kdCalculated, 0), 'fc = ', fc)
-    
-    print("For ⲉo < ⲉc < ⲉcu")
     # For case ⲉo < ⲉc < ⲉcu
     ⲉc = ⲉo + 0.0001
     while (ⲉc + iterator_increment) <= 0.003:
@@ -402,15 +612,12 @@ for i in range(3):
                 kdCalculated = (-1 * qb + math.sqrt(qd)) / (2 * qa)
                 fs = (Es * ⲉc) * (d - kdCalculated) / kdCalculated
                 fsPrime = Es * ⲉc / kdCalculated * (kdCalculated - d_prime)
-                print('Tension steel yields but compression steel did not.')
             else:
                 # fs and fs' > fy
                 kdCalculated = (As[i] - AsPrime[i]) * fy / (Lo * fc * b)
                 fs = fy
                 fsPrime = fy
-                print('Both tension and compression steel yields.')
         else:
-            print('Tension steel did not yield.')
             qa = Lo * fc * b
             qb = AsPrime[i] * fy + As[i] * Es * ⲉc
             qc = -As[i] * Es * ⲉc * d
@@ -419,104 +626,27 @@ for i in range(3):
             fs = (Es * ⲉc) * (d - kdCalculated) / kdCalculated
             fsPrime = Es * ⲉc / kdCalculated * (kdCalculated - d_prime)
             
+            if fsPrime < fy:
+                # Compression syeel did not yield
+                # Compression steel does not yields
+                qa = Lo * fc * b
+                qb = (Es * ⲉc) * (AsPrime[i] + As[i])
+                qc = -(Es * ⲉc) * (As[i] * d + AsPrime[i] * d_prime)
+                qd = (qb**2) - (4 * qa * qc)           # Discriminant
+                kdCalculated = (-1 * qb + math.sqrt(qd)) / (2 * qa)
+                fs = (Es * ⲉc) * (d - kdCalculated) / kdCalculated
+                fsPrime = Es * ⲉc / kdCalculated * (kdCalculated - d_prime)
+            
         Mc = Lo * fc * b * kdCalculated * (d - k2 * kdCalculated) +\
                 AsPrime[i] * fsPrime * (d - d_prime)
         ϕc = ⲉc / kdCalculated
         
-        print('Mc = ', round(Mc / 1000**2, 2), 'ϕc = ', round(ϕc, 8), 'ⲉc = ', round(ⲉc, 5), 'kd = ', round(kdCalculated, 0), 'fc = ', fc)
         ϕ[i].append(ϕc)
         M[i].append(Mc)
 ```
 
-    =======================================
-    Case No. 1
-    =======================================
-    Mcr =  54.57 ϕc =  7.970318780711861e-07 kd =  263.13649515099587
-    Mcr =  54.57 ϕc =  1.0428634969669626e-06 kd =  223.02262969808856 After cracking...
-    Myield =  114.39 ϕc =  2.1859129421746513e-06 ⲉc =  0.0004875080526548766 kd =  223.0226296980886
-    For 0 < ⲉc < ⲉo
-    Tension steel did not yield.
-    Mc =  153.69 ϕc =  3.95e-06 ⲉc =  0.00103 kd =  261.0 fc =  15.281428223688067
-    Tension steel did not yield.
-    Mc =  187.86 ϕc =  4.76e-06 ⲉc =  0.00123 kd =  258.0 fc =  16.655591741493783
-    Tension steel did not yield.
-    Mc =  216.42 ϕc =  5.52e-06 ⲉc =  0.00143 kd =  259.0 fc =  17.509990553417143
-    Tension steel did not yield.
-    Mc =  237.47 ϕc =  6.23e-06 ⲉc =  0.00163 kd =  261.0 fc =  17.844624659458155
-    For ⲉo < ⲉc < ⲉcu
-    Tension steel did not yield.
-    Mc =  259.5 ϕc =  7.3e-06 ⲉc =  0.00196 kd =  268.0 fc =  17.849999999999998
-    Tension steel did not yield.
-    Mc =  269.74 ϕc =  7.93e-06 ⲉc =  0.00216 kd =  272.0 fc =  17.849999999999998
-    Tension steel did not yield.
-    Mc =  278.35 ϕc =  8.54e-06 ⲉc =  0.00236 kd =  276.0 fc =  17.849999999999998
-    Tension steel did not yield.
-    Mc =  285.68 ϕc =  9.14e-06 ⲉc =  0.00256 kd =  280.0 fc =  17.849999999999998
-    Tension steel did not yield.
-    Mc =  292.0 ϕc =  9.73e-06 ⲉc =  0.00276 kd =  283.0 fc =  17.849999999999998
-    Tension steel did not yield.
-    Mc =  297.51 ϕc =  1.032e-05 ⲉc =  0.00296 kd =  287.0 fc =  17.849999999999998
-    =======================================
-    Case No. 2
-    =======================================
-    Mcr =  43.86 ϕc =  7.315136942596765e-07 kd =  246.40002452244482
-    Mcr =  43.86 ϕc =  1.27052110091158e-06 kd =  177.01582310560858 After cracking...
-    Myield =  95.07 ϕc =  2.7540365832947417e-06 ⲉc =  0.0004875080526548766 kd =  177.01582310560858
-    For 0 < ⲉc < ⲉo
-    Tension steel did not yield.
-    Mc =  132.65 ϕc =  4.82e-06 ⲉc =  0.00103 kd =  213.0 fc =  15.281428223688067
-    Tension steel did not yield.
-    Mc =  161.97 ϕc =  5.83e-06 ⲉc =  0.00123 kd =  211.0 fc =  16.655591741493783
-    Tension steel did not yield.
-    Mc =  186.87 ϕc =  6.76e-06 ⲉc =  0.00143 kd =  211.0 fc =  17.509990553417143
-    Tension steel yields but compression steel did not.
-    Mc =  201.24 ϕc =  7.85e-06 ⲉc =  0.00163 kd =  208.0 fc =  17.844624659458155
-    For ⲉo < ⲉc < ⲉcu
-    Both tension and compression steel yields.
-    Mc =  203.58 ϕc =  1.024e-05 ⲉc =  0.00196 kd =  191.0 fc =  17.849999999999998
-    Both tension and compression steel yields.
-    Mc =  204.35 ϕc =  1.17e-05 ⲉc =  0.00216 kd =  184.0 fc =  17.849999999999998
-    Both tension and compression steel yields.
-    Mc =  204.89 ϕc =  1.316e-05 ⲉc =  0.00236 kd =  179.0 fc =  17.849999999999998
-    Both tension and compression steel yields.
-    Mc =  205.27 ϕc =  1.462e-05 ⲉc =  0.00256 kd =  175.0 fc =  17.849999999999998
-    Both tension and compression steel yields.
-    Mc =  205.55 ϕc =  1.608e-05 ⲉc =  0.00276 kd =  172.0 fc =  17.849999999999998
-    Both tension and compression steel yields.
-    Mc =  205.76 ϕc =  1.754e-05 ⲉc =  0.00296 kd =  169.0 fc =  17.849999999999998
-    =======================================
-    Case No. 3
-    =======================================
-    Mcr =  60.97 ϕc =  7.167101269032306e-07 kd =  242.19468984442693
-    Mcr =  60.97 ϕc =  9.733433018711496e-07 kd =  196.764121236301 After cracking...
-    Myield =  159.98 ϕc =  2.5125377830969175e-06 ⲉc =  0.0004875080526548766 kd =  194.0301379484058
-    For 0 < ⲉc < ⲉo
-    Tension steel did not yield.
-    Mc =  244.28 ϕc =  5.31e-06 ⲉc =  0.00103 kd =  194.0 fc =  15.281428223688067
-    Tension steel did not yield.
-    Mc =  302.97 ϕc =  6.1e-06 ⲉc =  0.00123 kd =  201.0 fc =  16.655591741493783
-    Tension steel did not yield.
-    Mc =  357.3 ϕc =  6.86e-06 ⲉc =  0.00143 kd =  208.0 fc =  17.509990553417143
-    Tension steel yields but compression steel did not.
-    Mc =  414.18 ϕc =  7.27e-06 ⲉc =  0.00163 kd =  224.0 fc =  17.844624659458155
-    For ⲉo < ⲉc < ⲉcu
-    Both tension and compression steel yields.
-    Mc =  422.07 ϕc =  1.024e-05 ⲉc =  0.00196 kd =  191.0 fc =  17.849999999999998
-    Both tension and compression steel yields.
-    Mc =  422.84 ϕc =  1.17e-05 ⲉc =  0.00216 kd =  184.0 fc =  17.849999999999998
-    Both tension and compression steel yields.
-    Mc =  423.37 ϕc =  1.316e-05 ⲉc =  0.00236 kd =  179.0 fc =  17.849999999999998
-    Both tension and compression steel yields.
-    Mc =  423.75 ϕc =  1.462e-05 ⲉc =  0.00256 kd =  175.0 fc =  17.849999999999998
-    Both tension and compression steel yields.
-    Mc =  424.03 ϕc =  1.608e-05 ⲉc =  0.00276 kd =  172.0 fc =  17.849999999999998
-    Both tension and compression steel yields.
-    Mc =  424.25 ϕc =  1.754e-05 ⲉc =  0.00296 kd =  169.0 fc =  17.849999999999998
-
-
-
 ```python
-# Convert the values of data to smaller figures
+# Convert the values of data to smaller figures before plotting
 ϕ_converted = ([], [], [])
 M_converted = ([], [], [])
 for i in range(3):
@@ -544,5 +674,5 @@ plt.show()
 ```
 
 
-![png](output_3_0.png)
+
 
