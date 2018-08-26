@@ -77,13 +77,6 @@ As a general solution to the problem, analysis as doubly reinforced beam is appl
 
 
 
-
-
-
-
-
-
-
 Calculating, we have $\epsilon o = 0.001657​$
 
 Now that we have $kd$ and $fr$, we solve for $\epsilon c$ by ratio and proportion based on the strain diagram below:
@@ -110,13 +103,13 @@ Calculating $fc = \epsilon c \cdot Ec$, we get $fc = 3.697 $ MPa
 
 From the strain diagram in Figure 2 above, we have,
 $$
-\frac{\epsilon c}{kd} = \frac{\frac{fs'}{Es}}{kd - d'}
+\dfrac{\epsilon c}{kd} = \dfrac{\dfrac{fs'}{Es}}{kd - d'}
 $$
 This gives us, $fs' = 27.2059$ MPa.
 
 Now, we solve for required parameters in PCA stress block, $Lo(k1\cdot k3)$ and $k2$.
 $$
-\lambda o = \frac{\epsilon c}{\epsilon o}
+\lambda o = \dfrac{\epsilon c}{\epsilon o}
 $$
 From the calculated $\epsilon o$ and $\epsilon c$, we get $\lambda o = 0.1035$.
 
@@ -146,33 +139,38 @@ Following the formula above, we get, $Lo = 0.08498$
 
 Then from the stress diagram above, we take moment at the tension steel,
 $$
-Mcr = Lo \cdot fc \cdot kd \cdot b \cdot (d - k2\cdot kd) + As\cdot fs'(d - d')
+Mc = Lo \cdot fc \cdot kd \cdot b \cdot (d - k2\cdot kd) + As\cdot fs'(d - d')
 $$
 We then get, $Mcr = 37.5 kN\cdot m$
 
-For the curvature $\phi c = \frac{\epsilon c}{kd}$, $\phi c = 7.12 x10^{-7} rad/mm$
+For the curvature $\phi c = \dfrac{\epsilon c}{kd}$, $\phi c = 7.12 x10^{-7} rad/mm$
 
 
-   3. Calculate the curvature $\phi c​$ right after cracking
+
+
+   3. Calculate the curvature $\phi c$ right after cracking
 
       The neutral axis will shift after the crack, so taking moment of area for transformed steel in tension ($\eta As$) and compression ($(\eta-1)As$) and concrete at the compressive area into the neutral axis:
       $$
-      b \cdot kd \cdot \frac{kd}{2} + (\eta-1)As' \cdot (kd-d') = \eta As \cdot (d-kd)
+      b \cdot kd \cdot \dfrac{kd}{2} + (\eta-1)As' \cdot (kd-d') = \eta As \cdot (d-kd)
       $$
 
-      | Particulars                 | Calculated Values   |
-      | --------------------------- | ------------------- |
-      | $kd$                        | 196.76 $mm$         |
-      | $Ic~(after crack)~$         | $2.908x10^9 mm^4$   |
-      | $ϕc = \dfrac{Mcr}{Ec * Ic}$ | $ 9.733e-07 rad/mm$ |
+      | Particulars                   | Calculated Values         |
+      | ----------------------------- | ------------------------- |
+      | $kd$                          | 196.76 $mm$               |
+      | $ϕc = \dfrac{\epsilon c}{kd}$ | $ 8.5303 x10^{-7} rad/mm$ |
 
-   #### Stage 2 : Concrete compression yield at ($fc = 0.5f'c$)
+#### Stage 2 : Concrete compression yield at ($fc = 0.5f'c$)
+
+Now let's find the point wherein the concrete yields at a specified stress ($0.5 f'c$).
 
    By equilibrium, $C = T$
 $$
-   \frac{1}{2} fc \cdot kd \cdot b  + (As - As')fs = As' \cdot fs
+Lo \cdot fc \cdot kd \cdot b + As'\cdot fs' = As \cdot fs
 $$
-   Solving kd using quadratic formula,  $ kd = 194.03mm $
+By using $fc = 0.5 f'c$, $\epsilon c = 0.000487$
+
+Using equations (4), (5) and (6), we obtain,  $ kd = 194.03mm $
 
    By deriving from the **Strain Diagram** above, we get:
 $$
@@ -183,23 +181,15 @@ $$
    fs' = Es \cdot ⲉc \cdot \dfrac{kd - d'}{kd}
 $$
 
-   After this, $fs$ and $fs'$ are compared to $fy$, if  any of them is greater than $fy$, steel yields and, so use $fs = fy$ or $fs' = fy$ correspondingly is solving for Moments.
+After this, $fs$ and $fs'$ are compared to $fy$, if  any of them is greater than $fy$, steel yields and, so use $fs = fy$ or $fs' = fy$ correspondingly is solving for Moments.
+
+Moment can now be solved using equation (9):
 
 
-
-   Moment can now be solved by taking moment to tension steel:
-$$
-Mc = \dfrac{1}{2} \cdot fc \cdot kd \cdot b \cdot (d - \dfrac{kd}{3}) + As'\cdot fs' (d - d')
-$$
-
-
-| Particulars    | Calculated Values      |
-| -------------- | ---------------------- |
-| $fc = 0.5 f'c$ | $10.50 MPa$            |
-| $fs$           | $103.50 MPa$           |
-| $fs'$          | $72.37 MPa$            |
-| $Mc$           | $ 159.98 x 10^6 kN-m $ |
-| $ϕc$           | $ 2.512e-07 rad/mm$    |
+| Particulars | Calculated Values        |
+| ----------- | ------------------------ |
+| $Mc$        | $ 130.19 kN-m $          |
+| $ϕc$        | $ 2.099 x10^{-6} rad/mm$ |
 
 
 
@@ -287,39 +277,6 @@ Calculation inside these stages are almost the same except for the calculations 
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 ### III. Results / Charts
 
 ---
@@ -330,14 +287,15 @@ Following is the result of the run of the script for the problem in all three (3
 
 | Moment ($kN \cdot m$)   | $\phi c$ (rad/mm) | $\epsilon c$ | Tension Steel Yield | Compression Steel Yield |
 | ----------------------- | ----------------- | ------------ | ------------------- | ----------------------- |
-| 54.57                   | 7.9703e-07        |              |                     |                         |
-| 54.57                   | 1.0428e-06        |              |                     |                         |
-| 114.39                  | 2.1859e-06        | 0.00048      |                     |                         |
+| 11.44                   | 7.9703e-07        |              |                     |                         |
+| 11.44                   | 9.4038e-07        |              |                     |                         |
+| 52.48                   | 1.6977e-06        | 0.00048      |                     |                         |
 | ***For 0 < ⲉc < ⲉo***   |                   |              |                     |                         |
-| 153.69                  | 3.95e-06          | 0.00103      | False               | False                   |
-| 187.86                  | 4.76e-06          | 0.00123      | False               | False                   |
-| 216.42                  | 5.52e-06          | 0.00143      | False               | False                   |
-| 237.47                  | 6.23e-06          | 0.00163      | False               | False                   |
+| 89.09                   | 2.52e-06          | 0.00069      | False               | False                   |
+| 127.38                  | 3.36e-06          | 0.00089      | False               | False                   |
+| 164.18                  | 4.19e-06          | 0.00109      | False               | False                   |
+| 196.92                  | 4.99e-06          | 0.00129      | False               | False                   |
+| 223.4                   | 5.74e-06          | 0.00149      | False               | False                   |
 | ***For ⲉo < ⲉc < ⲉcu*** |                   |              |                     |                         |
 | 259.5                   | 7.3e-06           | 0.00196      | False               | True                    |
 | 269.74                  | 7.93e-06          | 0.00216      | False               | True                    |
@@ -370,14 +328,15 @@ Following is the result of the run of the script for the problem in all three (3
 
 | Moment ($kN \cdot m$)   | $\phi c$ (rad/mm) | $\epsilon c$ | Tension Steel Yield | Compression Steel Yield |
 | ----------------------- | ----------------- | ------------ | ------------------- | ----------------------- |
-| 43.86                   | 7.315e-07         |              |                     |                         |
-| 43.86                   | 1.270e-06         |              |                     |                         |
-| 95.07                   | 2.754e-06         | 0.00048      |                     |                         |
+| 8.11                    | 7.315e-07         |              |                     |                         |
+| 8.11                    | 1.018e-06         |              |                     |                         |
+| 46.36                   | 2.022e-06         | 0.00048      |                     |                         |
 | ***For 0 < ⲉc < ⲉo***   |                   |              |                     |                         |
-| 132.65                  | 4.82e-06          | 0.00103      | False               | False                   |
-| 161.97                  | 5.83e-06          | 0.00123      | False               | False                   |
-| 186.87                  | 6.76e-06          | 0.00143      | False               | False                   |
-| 201.24                  | 7.85e-06          | 0.00163      | True                | False                   |
+| 77.65                   | 3.05e-06          | 0.00069      | False               | False                   |
+| 110.23                  | 4.09e-06          | 0.00089      | False               | False                   |
+| 141.62                  | 5.12e-06          | 0.00109      | False               | False                   |
+| 169.81                  | 6.11e-06          | 0.00129      | False               | False                   |
+| 193.12                  | 7.02e-06          | 0.00149      | False               | False                   |
 | ***For ⲉo < ⲉc < ⲉcu*** |                   |              |                     |                         |
 | 203.58                  | 1.024e-05         | 0.00196      | True                | True                    |
 | 204.35                  | 1.17e-05          | 0.00216      | True                | True                    |
@@ -416,25 +375,26 @@ Following is the result of the run of the script for the problem in all three (3
 
 | Moment ($kN \cdot m$)   | $\phi c$ (rad/mm) | $\epsilon c$ | Tension Steel Yield | Compression Steel Yield |
 | ----------------------- | ----------------- | ------------ | ------------------- | ----------------------- |
-| 60.97                   | 7.167e-07         |              |                     |                         |
-| 60.97                   | 9.733e-07         |              |                     |                         |
-| 159.98                  | 2.512e-06         | 0.00048      |                     |                         |
+| 37.5                    | 7.124e-07         |              |                     |                         |
+| 37.5                    | 8.530e-07         |              |                     |                         |
+| 130.19                  | 2.099e-06         | 0.00048      |                     |                         |
 | ***For 0 < ⲉc < ⲉo***   |                   |              |                     |                         |
-| 260.98                  | 4.72e-06          | 0.00103      | False               | False                   |
-| 315.58                  | 5.67e-06          | 0.00123      | False               | False                   |
-| 365.39                  | 6.58e-06          | 0.00143      | False               | False                   |
-| 414.18                  | 7.27e-06          | 0.00163      | True                | False                   |
+| 196.57                  | 3.05e-06          | 0.00069      | False               | False                   |
+| 264.6                   | 4.02e-06          | 0.00089      | False               | False                   |
+| 331.44                  | 4.97e-06          | 0.00109      | False               | False                   |
+| 394.8                   | 5.91e-06          | 0.00129      | False               | False                   |
+| 452.77                  | 6.81e-06          | 0.00149      | False               | False                   |
 | ***For ⲉo < ⲉc < ⲉcu*** |                   |              |                     |                         |
-| 422.07                  | 1.024e-05         | 0.00196      | True                | True                    |
-| 422.84                  | 1.17e-05          | 0.00216      | True                | True                    |
-| 423.37                  | 1.316e-05         | 0.00236      | True                | True                    |
-| 423.75                  | 1.462e-05         | 0.00256      | True                | True                    |
-| 424.03                  | 1.608e-05         | 0.00276      | True                | True                    |
-| 424.25                  | 1.754e-05         | 0.00296      | True                | True                    |
+| 509.46                  | 1.024e-05         | 0.00196      | True                | True                    |
+| 510.23                  | 1.17e-05          | 0.00216      | True                | True                    |
+| 510.76                  | 1.316e-05         | 0.00236      | True                | True                    |
+| 511.14                  | 1.462e-05         | 0.00256      | True                | True                    |
+| 511.42                  | 1.608e-05         | 0.00276      | True                | True                    |
+| 511.64                  | 1.754e-05         | 0.00296      | True                | True                    |
 
 
 
-![output_4_0](D:\Personal\Masteral\AdvancedConcreteDesign\Notebooks\Problem Set 1\output_4_0.png)
+![](/Users/syncster31/Documents/Masteral/masteral-advanced-concrete-design/Notebooks/Problem Set 1/output_4_0.png)
 
 
 
@@ -448,11 +408,6 @@ Following are comments and findings in this problem set.
 
 - Following the 1st comment, if we look at the table in the Results section at Case 1, we can see that the tensile reinforcements did not yield until the beam failed. This could be the reason why we avoid to have a balanced design or even an over reinforced design for that matter.
 
-- After the elastic stage, I also noticed the change in slope in the range of $\epsilon c < \epsilon o$. The slope goes steeper and steeper until $ \epsilon c $  approaches  $\epsilon o$ and then it abruptly goes almost flat. I'm not sure if this though if this is what's called the *strain hardening* before the crushing of concrete at failure.
-
-- Lastly is the comparison of calculated moment at $fc = 0.5 f'c$ from that computed at yield point using triangular stress block (*end of elastic stage*) and that of computing it using PCA stress block (*considering inelastic stage*). In the figure at the result above, I started the $\epsilon c$ iteration way far ahead of calculated strain ($\epsilon$~0.5f'c~). The moment calculated using inelastic approach is less than of that computed using elastic approach at $fc = 0.5 f'c$ as shown below (for Case 1 and Case 2).
-
-  ![](D:\Personal\Masteral\AdvancedConcreteDesign\Notebooks\Problem Set 1\output_4_1.png)
 
 
 
