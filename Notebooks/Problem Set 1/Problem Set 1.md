@@ -69,13 +69,91 @@ As a general solution to the problem, analysis as doubly reinforced beam is appl
 
    2. Calculation of $M~cr~$ and $\phi~cr~$
 
-      | Particulars                          | Calculated Values     |
-      | ------------------------------------ | --------------------- |
-      | $I~cr~$                              | $3.949x10^9 mm^4$     |
-      | $ Mcr = fr  \dfrac {Icr}{h - kd} $   | $ 60.97 x 10^6 kN-m $ |
-      | $\phi cr = \frac{fr}{Ec * (h - kd)}$ | $ 7.167e-07 rad/mm$   |
+      $\epsilon o$ must first be calculated using:
+      $$
+      \epsilon o = \frac {2 \cdot 0.85 \cdot f'c}{Ec}
+      $$
 
-   3. Calculate the curvature $\phi c$ right after cracking
+
+
+
+
+
+
+
+
+
+
+Calculating, we have $\epsilon o = 0.001657​$
+
+Now that we have $kd$ and $fr$, we solve for $\epsilon c$ by ratio and proportion based on the strain diagram below:
+
+
+
+***Figure 1***
+
+<img src="/Users/syncster31/Documents/Masteral/masteral-advanced-concrete-design/Notebooks/Problem Set 1/strain-diagram-fr.png" width="200" align="center"/>
+
+$$
+\frac{\epsilon c}{kd} = \frac{\frac{fr}{Ec}}{h - kd}
+$$
+
+Calculating, we have $\epsilon c = 0.00017$
+
+Calculating $fc = \epsilon c \cdot Ec$, we get $fc = 3.697 $ MPa
+
+
+
+***Figure 2***
+
+![](/Users/syncster31/Documents/Masteral/masteral-advanced-concrete-design/Notebooks/Problem Set 1/Concrete Stress Block Linear.svg)
+
+From the strain diagram in Figure 2 above, we have,
+$$
+\frac{\epsilon c}{kd} = \frac{\frac{fs'}{Es}}{kd - d'}
+$$
+This gives us, $fs' = 27.2059$ MPa.
+
+Now, we solve for required parameters in PCA stress block, $Lo(k1\cdot k3)$ and $k2$.
+$$
+\lambda o = \frac{\epsilon c}{\epsilon o}
+$$
+From the calculated $\epsilon o$ and $\epsilon c$, we get $\lambda o = 0.1035$.
+
+For calculating parameters $Lo (k1 \cdot k3)$ and $k2$,
+
+For $0 < \epsilon c < \epsilon o$:
+$$
+Lo = \frac{0.85}{3} \cdot \lambda o \cdot (3 - \lambda o)
+$$
+
+$$
+k2 = \frac{1}{4}[\frac{4 - \lambda o}{3 - \lambda o}]
+$$
+
+For $\epsilon o < \epsilon c < \epsilon cu$
+$$
+Lo = 0.85 \cdot (\frac{3\lambda o - 1}{3\lambda o})
+$$
+
+$$
+k2 = \frac{6(\lambda o)^2 - 4\lambda o + 1}{4\lambda o(3\lambda o - 1)}
+$$
+
+Since $\epsilon c < \epsilon o$, $ k2 = 0.3363$
+
+Following the formula above, we get, $Lo = 0.08498$
+
+Then from the stress diagram above, we take moment at the tension steel,
+$$
+Mcr = Lo \cdot fc \cdot kd \cdot b \cdot (d - k2\cdot kd) + As\cdot fs'(d - d')
+$$
+We then get, $Mcr = 37.5 kN\cdot m$
+
+For the curvature $\phi c = \frac{\epsilon c}{kd}$, $\phi c = 7.12 x10^{-7} rad/mm$
+
+
+   3. Calculate the curvature $\phi c​$ right after cracking
 
       The neutral axis will shift after the crack, so taking moment of area for transformed steel in tension ($\eta As$) and compression ($(\eta-1)As$) and concrete at the compressive area into the neutral axis:
       $$
@@ -90,24 +168,20 @@ As a general solution to the problem, analysis as doubly reinforced beam is appl
 
    #### Stage 2 : Concrete compression yield at ($fc = 0.5f'c$)
 
-   At this stage, compression block is still assumed linear and so can be represented by a triangular shape as shown. 
-
-   ![Concrete Stress Block Linear](D:\Personal\Masteral\AdvancedConcreteDesign\Notebooks\Problem Set 1\Concrete Stress Block Linear.svg)
-
    By equilibrium, $C = T$
-   $$
+$$
    \frac{1}{2} fc \cdot kd \cdot b  + (As - As')fs = As' \cdot fs
-   $$
+$$
    Solving kd using quadratic formula,  $ kd = 194.03mm $
 
    By deriving from the **Strain Diagram** above, we get:
-   $$
+$$
    fs = Es \cdot ⲉc \cdot \dfrac{d - kd}{kd}
-   $$
+$$
 
-   $$
+$$
    fs' = Es \cdot ⲉc \cdot \dfrac{kd - d'}{kd}
-   $$
+$$
 
    After this, $fs$ and $fs'$ are compared to $fy$, if  any of them is greater than $fy$, steel yields and, so use $fs = fy$ or $fs' = fy$ correspondingly is solving for Moments.
 
@@ -133,7 +207,7 @@ $$
 
 At this stage, compression block is no longer triangular, concrete modulus of elasticity is also no longer constant.
 
-![](D:\Personal\Masteral\AdvancedConcreteDesign\Notebooks\Problem Set 1\Concrete Stress Block NonLinear.svg)
+
 
 Solving for the moment and curvature is divided into two (2) more stages:
 
@@ -209,6 +283,23 @@ Calculation inside these stages are almost the same except for the calculations 
    $$
    $\phi c = \epsilon c / kd
    $$
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
