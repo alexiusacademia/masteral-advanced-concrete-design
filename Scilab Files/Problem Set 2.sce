@@ -59,7 +59,8 @@ end
 // -------------------------------------
 // Start of problem main calculation
 // -------------------------------------
-for (i=1: 1: 4)
+result = list()
+for (i = 1: 1: 4)
     // Calculate balanced value for 'c'
     c_bal = 600 * d / (600 + fy(1, i))
 
@@ -74,11 +75,60 @@ for (i=1: 1: 4)
         z_bal = 0
     end
 
+    // Balanced equation
+    // Asb.fy = 0.85 f'c.bf.tf + 0.85f'c.bw.z
+    As_bal = (0.85 * fcPrime(1, i) * bf * tf + 0.85 * fcPrime(1, i) * bw * z_bal) / fy(1, i)
     
+    As_limit = 2 * As_bal
+    
+    As_trial = 100
+    Mmax = 0.0
+    
+    dataColumn = [0, 0]
+    row_ctr = 2
+    while (As_trial <= As_limit)
+        a = 0
+        c = a / β1(1, i)
+        As_calc = 0
+        fs = 0.0
+        fs_actual = 0.0
+        
+        while (As_calc < As_trial)
+            c = a / β1(1, i)
+            fs = 600 * (d - c) / c
+            fs_actual = fs
+            if (fs >= fy(1, i)) then
+                fs = fy(1, i)
+            end
+            Ac = tbeamArea(bf, tf, bw, a)
+            
+            As_calc = 0.85 * fcPrime(1, i) * Ac / fs
+            a = a + 0.2
+        end
+        
+        // Calculate for the strain in concrete
+        ϵc = (fs/Es) / (d-c) * c
+        
+        // Calculate moment
+        Mn = As_calc * fs * (d - centroidOfTBeam(bf, tf, bw, a))
+
+        As_trial = As_trial + 100
+        
+        dataColumn(row_ctr, 1) = As_calc
+        dataColumn(row_ctr, 2) = Mn
+        
+        row_ctr = row_ctr + 1
+    end
+    
+    result($+1) = dataColumn
 end
 
-
-
-
+plot(result(1), 'rs')
+plot(result(2), 'bs')
+plot(result(3), 'gs')
+plot(result(4), 'ms')
+xtitle("Moment Capacity Curve")
+xlabel("Steel Area")
+ylabel("Moment Capacity")
 
 
