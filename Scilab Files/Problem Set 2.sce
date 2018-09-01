@@ -123,12 +123,13 @@ for (i = 1: 1: 4)
     result($+1) = dataColumn
 end
 
-plot(result(1), 'rs')
-plot(result(2), 'bs')
-plot(result(3), 'gs')
-plot(result(4), 'ms')
+plot(result(1), 'r')
+plot(result(2), 'b')
+plot(result(3), 'g')
+plot(result(4), 'm')
 xtitle("Moment Capacity Curve")
-xlabel("Steel Area")
+xlabel("Steel Area ($\As (mm) x10^2$)")
 ylabel("Moment Capacity")
-
-
+handle = get("current_axes")        // Get the handle for the newly created axes
+handle.font_size = 3
+handle.auto_scale = "off"
