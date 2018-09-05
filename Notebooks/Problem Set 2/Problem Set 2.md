@@ -2,7 +2,7 @@
 
 ------
 
-Draw the Moment-Capacity and Tension Steel relationship curve of a reinforced concrete beam of different cases with parameters as follows:
+Draw the Moment-Capacity and Tension Steel (Mn - As) relationship curve of a reinforced concrete t-beam of different cases with parameters as follows:
 
 **General Cases**
 
@@ -15,29 +15,37 @@ Draw the Moment-Capacity and Tension Steel relationship curve of a reinforced co
 
 **Beam Properties**
 
-| Property                        | Value    | Unit |
-| ------------------------------- | -------- | ---- |
-| f'c                             | 21       | MPa  |
-| fy                              | 275      | MPa  |
-| fr = 0.7 $\sqrt{f'c}$           | 3.208    | MPa  |
-| Es                              | 200,000  | MPa  |
-| Ec =  (4,700$ \sqrt{f'c} $)     | 21538.10 | MPa  |
-| β~1~                            | 0.85     |      |
-| η = Es / Ec                     | 9.28     |      |
-| b (beam width)                  | 300      | mm   |
-| h (beam height)                 | 450      | mm   |
-| d (effective depth)             | 400      | mm   |
-| d' (compression steel location) | 50       | mm   |
+![](D:\Personal\Masteral\AdvancedConcreteDesign\Notebooks\Problem Set 2\T-Beam.jpg)
 
+| Property                                            | Value                | Unit |
+| --------------------------------------------------- | -------------------- | ---- |
+| f'c                                                 | [20, 40, 20, 40]     | MPa  |
+| fy                                                  | [300, 300, 400, 400] | MPa  |
+| Effective depth (d)                                 | 435                  | mm   |
+| Web width (b~w~)                                    | 250                  | mm   |
+| Thickness of flange (t~f~)                          | 125                  | mm   |
+| $\epsilon$~cu~                                      | 0.003                |      |
+| E~s~                                                | 200,000              | MPa  |
+| f'c reference                                       | 28                   | MPa  |
+| Student number (last 3-digits)                      | 338                  |      |
+| Factor based of on reversed student number $\alpha$ | 0.833                |      |
+| $bf = bw + \alpha \cdot tf$                         | 2550                 | mm   |
 
+$\beta 1$ is solved for each value of $f'c$.
 
+```python
+fcPrime = [20, 40, 20, 40]
+fy = [300, 300, 400, 400]
+β1 = []
+# Calculate for corresponding β1
+for fcx in fcPrime:
+    if fcx <= fc_base:
+        β1.append(0.85)
+    else:
+        β1.append(round(0.85 - (0.05 / 7)*(fcx - fc_base), 3))
+```
 
-
-
-
-
-
-
+$\beta 1$ now is `[0.85, 0.764, 0.85, 0.764]`
 
 
 
@@ -45,238 +53,82 @@ Draw the Moment-Capacity and Tension Steel relationship curve of a reinforced co
 
 ------
 
-As a general solution to the problem, analysis as doubly reinforced beam is applied to address all the cases (singly or doubly reinforced). The following are the steps used:
-
-1. Compute for the balanced steel at tension.
-
-   $ Asb = 4,539.92  mm^2 $
-
-2. Steel area is assigned to both tension and compression side as indicated in the general cases.
-
-3. For the 3 stages of the behavior of the beam:
-
-   #### Stage 1 : Cracking point of concrete in tension
-
-   1. Neutral axis location (kd) from the compression fiber of concrete is calculated by transforming area of steel to area of concrete using the modular ratio $\eta$:
-
-      ##### a. Uncrack section (Case 1 : Doubly Reinforced)
-
-      | Particulars                                                  | Calculated Values  |
-      | ------------------------------------------------------------ | ------------------ |
-      | $ As(transformed) = (\eta - 1) As $                          | 37,617.24 $ mm^2 $ |
-      | $ As'(transformed) = (\eta - 1) As' $                        | 18,808.62 $ mm^2 $ |
-      | By taking moment of areas of concrete and steel to topmost fiber: |                    |
-      | $ kd $                                                       | 242.19 $mm$        |
-
-   2. Calculation of $M~cr~$ and $\phi~cr~$
-
-      $\epsilon o$ must first be calculated using:
-      $$
-      \epsilon o = \frac {2 \cdot 0.85 \cdot f'c}{Ec}
-      $$
-
-
-
-
-
-Calculating, we have $\epsilon o = 0.001657​$
-
-Now that we have $kd$ and $fr$, we solve for $\epsilon c$ by ratio and proportion based on the strain diagram below:
-
-
-
-***Figure 1***
-
-<img src="/Users/syncster31/Documents/Masteral/masteral-advanced-concrete-design/Notebooks/Problem Set 1/strain-diagram-fr.png" width="200" align="center"/>
-
-$$
-\frac{\epsilon c}{kd} = \frac{\frac{fr}{Ec}}{h - kd}
-$$
-
-Calculating, we have $\epsilon c = 0.00017$
-
-Calculating $fc = \epsilon c \cdot Ec$, we get $fc = 3.697 $ MPa
-
-
-
-***Figure 2***
-
-![](/Users/syncster31/Documents/Masteral/masteral-advanced-concrete-design/Notebooks/Problem Set 1/Concrete Stress Block Linear.svg)
-
-From the strain diagram in Figure 2 above, we have,
-$$
-\dfrac{\epsilon c}{kd} = \dfrac{\dfrac{fs'}{Es}}{kd - d'}
-$$
-This gives us, $fs' = 27.2059$ MPa.
-
-Now, we solve for required parameters in PCA stress block, $Lo(k1\cdot k3)$ and $k2$.
-$$
-\lambda o = \dfrac{\epsilon c}{\epsilon o}
-$$
-From the calculated $\epsilon o$ and $\epsilon c$, we get $\lambda o = 0.1035$.
-
-For calculating parameters $Lo (k1 \cdot k3)$ and $k2$,
-
-For $0 < \epsilon c < \epsilon o$:
-$$
-Lo = \frac{0.85}{3} \cdot \lambda o \cdot (3 - \lambda o)
-$$
-
-$$
-k2 = \frac{1}{4}[\frac{4 - \lambda o}{3 - \lambda o}]
-$$
-
-For $\epsilon o < \epsilon c < \epsilon cu$
-$$
-Lo = 0.85 \cdot (\frac{3\lambda o - 1}{3\lambda o})
-$$
-
-$$
-k2 = \frac{6(\lambda o)^2 - 4\lambda o + 1}{4\lambda o(3\lambda o - 1)}
-$$
-
-Since $\epsilon c < \epsilon o$, $ k2 = 0.3363$
-
-Following the formula above, we get, $Lo = 0.08498$
-
-Then from the stress diagram above, we take moment at the tension steel,
-$$
-Mc = Lo \cdot fc \cdot kd \cdot b \cdot (d - k2\cdot kd) + As\cdot fs'(d - d')
-$$
-We then get, $Mcr = 37.5 kN\cdot m$
-
-For the curvature $\phi c = \dfrac{\epsilon c}{kd}$, $\phi c = 7.12 x10^{-7} rad/mm$
-
-
-
-
-   3. Calculate the curvature $\phi c$ right after cracking
-
-      The neutral axis will shift after the crack, so taking moment of area for transformed steel in tension ($\eta As$) and compression ($(\eta-1)As$) and concrete at the compressive area into the neutral axis:
-      $$
-      b \cdot kd \cdot \dfrac{kd}{2} + (\eta-1)As' \cdot (kd-d') = \eta As \cdot (d-kd)
-      $$
-
-      | Particulars                   | Calculated Values         |
-      | ----------------------------- | ------------------------- |
-      | $kd$                          | 196.76 $mm$               |
-      | $ϕc = \dfrac{\epsilon c}{kd}$ | $ 8.5303 x10^{-7} rad/mm$ |
-
-#### Stage 2 : Concrete compression yield at ($fc = 0.5f'c$)
-
-Now let's find the point wherein the concrete yields at a specified stress ($0.5 f'c$).
-
-   By equilibrium, $C = T$
-$$
-Lo \cdot fc \cdot kd \cdot b + As'\cdot fs' = As \cdot fs
-$$
-By using $fc = 0.5 f'c$, $\epsilon c = 0.000487$
-
-Using equations (4), (5) and (6), we obtain,  $ kd = 194.03mm $
-
-   By deriving from the **Strain Diagram** above, we get:
-$$
-   fs = Es \cdot ⲉc \cdot \dfrac{d - kd}{kd}
-$$
-
-$$
-   fs' = Es \cdot ⲉc \cdot \dfrac{kd - d'}{kd}
-$$
-
-After this, $fs$ and $fs'$ are compared to $fy$, if  any of them is greater than $fy$, steel yields and, so use $fs = fy$ or $fs' = fy$ correspondingly is solving for Moments.
-
-Moment can now be solved using equation (9):
-
-
-| Particulars | Calculated Values        |
-| ----------- | ------------------------ |
-| $Mc$        | $ 130.19 kN-m $          |
-| $ϕc$        | $ 2.099 x10^{-6} rad/mm$ |
-
-
-
-#### Stage 3 : Inelastic Stage
-
-At this stage, compression block is no longer triangular, concrete modulus of elasticity is also no longer constant.
-
-
-
-Solving for the moment and curvature is divided into two (2) more stages:
-
-1. $0 < \epsilon c < \epsilon o$
-
-2. $\epsilon o < \epsilon c < 0.003$
-
-   wherein we iterate in the value of $\epsilon c$
-
-Calculation inside these stages are almost the same except for the calculations of factors such as $k2$, $Lo$ and $fc$: 
-
-1. First, $fs$ and $fs'$ are assumed to yield, so to solve for $kd$ using equilibrium:
-   $$
-   C = T
-   $$
-
-   $$
-   Lo \cdot fc \cdot kd \cdot b = (As - As') \cdot fy
-   $$
-
-   $$
-   kd = (As - As') \cdot \frac{fy}{Lo \cdot fc \cdot b}
-   $$
-
-2. Now, steel stresses $fs$ and $fs'$ are computed using the calculated $kd$ with equations (3) and (4) respectively then compares them to $fy$:
-
-   a. If $fs > fy$:
-
-   This means steel yields at tension. We then test:
-
-   a.1. if $fs' > fy$:
-   Since the assumption that steel in compression and tension yields, 
-   we accept the calculated 	value of $kd$ then proceeds with $fs = fy$ and $fs' = fy$.
-
-   a.2. if $fs' < fy$:
-
-   Instead of both $As$ and $As'$ multiplying to $fy$ in equation (7), we multiply $As'$ by $fs'$ 
-
-   in equation (4), thus
-   $$
-   Lo \cdot fc \cdot kd \cdot b = Asfy - As'fs'
-   $$
-
-   $$
-   Lo \cdot fc \cdot kd \cdot b = Asfy - As'\cdot Es \cdot ⲉc \cdot \dfrac{kd - d'}{kd}
-   $$
-
-   $kd$ can now be recalculated using quadratic formula, then $fs'$ based on the new calculated $kd$
-
-   b. if $fs < fy$:
-
-   Now, assume the steel at compression yields, $fs' = fy$, we now then get re-write equation (9):
-   $$
-   Lo \cdot fc \cdot kd \cdot b = As\cdot fs - As'fy
-   $$
-
-   $$
-   Lo \cdot fc \cdot kd \cdot b = As\cdot Es \cdot ⲉc \cdot \dfrac{d - kd}{kd} - As'fy
-   $$
-
-   We now recalculate $kd$ using the quadratic equation above.
-
-   After calculating $kd$, we might want to check $fs'$ again if compression steel yields to check if assumption in equation (13) is correct. If not, we just replace $fy$ in equation (12) with equation (4) then recalculate $kd$.
-
-   $fs$ and $fs'$ can now be recalculated based on the new $kd$.
-
-3. After getting the stresses in steel, we can now solve for moment by taking moment at the tension steel
-   $$
-   Mc = Lo \cdot fc \cdot kd \cdot b \cdot (d - k2 \cdot kd) + As'\cdot fs'\cdot (d - d')
-   $$
-
-4. For the curvature, $\phi c$
-   $$
-   $\phi c = \epsilon c / kd
-   $$
-
-
+#### A. Assumptions
+
+- In this problem, tensile strength of concrete is neglected, so that at $As = 0$, $Mn = 0$.
+- Stress block used is the Whitney stress block distribution for simplicity of calculation.
+
+#### B. Solution
+
+The solution to the problem is to solve each cases in one go using programming language **python** by looping through a number of four (4) cases.
+
+1. Create list of arrays to hold values for moments and steel areas for each case:
+
+   ```python
+   # With initial values of zeros (0's) for Mn and As for each case
+   M = ([0], [0], [0], [0])
+   As = ([0], [0], [0], [0])
+   ```
+
+2. Now for looping on 4 cases:
+
+2.1. Calculation of balanced steel area, needed for the curve and analysis limit.
+
+   ```python
+   for i in range(4):
+       c_bal = 600 * d / (600 + fy[i])           # Location of neutral axis
+       a_bal = β1[i] * c_bal                     # Equivalent height of rectangular
+                                                 #  compression block
+       z_bal = a_bal - tf if a_bal > tf else 0   # Web component of compression zone
+                                                 #  if a > tf
+       As_bal = (0.85 * fcPrime[i] * bf * tf + 0.85 * fcPrime[i] * bw * z_bal) 
+                           / fy[i]
+       As_limit = 2 * As_bal                     # Limit to be analyzed
+       As_trial = 100                            # Start calculating here for As
+   ```
+2.2. Create a loop that tries for each value of As, then calculates the corresponding moment capacity, Mn until As_limit is reached.
+
+   ```python
+   while (As_trial <= As_limit):
+       a = 10                                    # Trial for height of stress block
+       c = a / β1[i]                             # Neutral axis height (kd)
+       As_calc = 0                               # Variable to hold calculated As
+                                                 # To be compared with As_trial
+   ```
+
+2.3. Find the height of stress block by trial and error
+
+   ```python
+   	   while (As_calc < As_trial):
+           c = a / β1[i]                         # Neutral axis height (kd)
+           fs = 600 * (d - c) / c                # Calculated fs
+           if (fs >= fy[i]):                     # Use fy if steel yields
+               fs = fy[i]
+           Ac = area_of_tbeam(bf, tf, bw, a)     # Calling a function to calculate
+                                                 #  area of a given t-beam
+           As_calc = 0.85 * fcPrime[i] * Ac / fs # Calculate As by equilibrium
+           a += 0.02                             # Increment a with 0.02mm
+   ```
+
+2.4. Nominal moment is now then calculated by taking a moment at centroid of stress block
+
+```python
+       Mn = As_calc * fs * (d - centroid_of_tbeam(bf, tf, bw, a))
+       
+       # Add the calculated moment and steel area to the array
+       M[i].append(Mn/1000**2)
+       As[i].append(As_calc)
+```
+
+2.5. To finalize a single loop, trial for steel area is incremented by $100 mm^2$ each time
+
+```python
+   As_trial += 100
+```
+
+
+
+This covers the whole process of the calculation. To add some more observations, some data have been collected and inserted to the actual code, (not shown in the main process above) to understand the result more deeply like; maximum nominal moment, strain at the compression fiber and actual steel stress is also collected to find if steel yields in each loop.
 
 
 
@@ -284,122 +136,15 @@ Calculation inside these stages are almost the same except for the calculations 
 
 ---
 
-Following is the result of the run of the script for the problem in all three (3) cases:
+The resulting graph for all cases is shown below:
 
-##### Case 1
+![](D:\Personal\Masteral\AdvancedConcreteDesign\Notebooks\Problem Set 2\output_3_1.png)
 
-| Moment ($kN \cdot m$)   | $\phi c$ (rad/mm) | $\epsilon c$ | Tension Steel Yield | Compression Steel Yield |
-| ----------------------- | ----------------- | ------------ | ------------------- | ----------------------- |
-| 11.44                   | 7.9703e-07        |              |                     |                         |
-| 11.44                   | 9.4038e-07        |              |                     |                         |
-| 52.48                   | 1.6977e-06        | 0.00048      |                     |                         |
-| ***For 0 < ⲉc < ⲉo***   |                   |              |                     |                         |
-| 89.09                   | 2.52e-06          | 0.00069      | False               | False                   |
-| 127.38                  | 3.36e-06          | 0.00089      | False               | False                   |
-| 164.18                  | 4.19e-06          | 0.00109      | False               | False                   |
-| 196.92                  | 4.99e-06          | 0.00129      | False               | False                   |
-| 223.4                   | 5.74e-06          | 0.00149      | False               | False                   |
-| ***For ⲉo < ⲉc < ⲉcu*** |                   |              |                     |                         |
-| 259.5                   | 7.3e-06           | 0.00196      | False               | True                    |
-| 269.74                  | 7.93e-06          | 0.00216      | False               | True                    |
-| 278.35                  | 8.54e-06          | 0.00236      | False               | True                    |
-| 285.68                  | 9.14e-06          | 0.00256      | False               | True                    |
-| 292.0                   | 9.73e-06          | 0.00276      | False               | True                    |
-| 297.51                  | 1.032e-05         | 0.00296      | False               | True                    |
+Also, a snippet of the resulting table of calculated $As$ and $Mn$ is shown below showing the transition between the steel yielding and not yielding.
 
+![](D:\Personal\Masteral\AdvancedConcreteDesign\Notebooks\Problem Set 2\Result_snippet.png)
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-##### Case 2
-
-| Moment ($kN \cdot m$)   | $\phi c$ (rad/mm) | $\epsilon c$ | Tension Steel Yield | Compression Steel Yield |
-| ----------------------- | ----------------- | ------------ | ------------------- | ----------------------- |
-| 8.11                    | 7.315e-07         |              |                     |                         |
-| 8.11                    | 1.018e-06         |              |                     |                         |
-| 46.36                   | 2.022e-06         | 0.00048      |                     |                         |
-| ***For 0 < ⲉc < ⲉo***   |                   |              |                     |                         |
-| 77.65                   | 3.05e-06          | 0.00069      | False               | False                   |
-| 110.23                  | 4.09e-06          | 0.00089      | False               | False                   |
-| 141.62                  | 5.12e-06          | 0.00109      | False               | False                   |
-| 169.81                  | 6.11e-06          | 0.00129      | False               | False                   |
-| 193.12                  | 7.02e-06          | 0.00149      | False               | False                   |
-| ***For ⲉo < ⲉc < ⲉcu*** |                   |              |                     |                         |
-| 203.58                  | 1.024e-05         | 0.00196      | True                | True                    |
-| 204.35                  | 1.17e-05          | 0.00216      | True                | True                    |
-| 204.89                  | 1.316e-05         | 0.00236      | True                | True                    |
-| 205.27                  | 1.462e-05         | 0.00256      | True                | True                    |
-| 205.55                  | 1.608e-05         | 0.00276      | True                | True                    |
-| 205.76                  | 1.754e-05         | 0.00296      | True                | True                    |
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-##### Case 3
-
-| Moment ($kN \cdot m$)   | $\phi c$ (rad/mm) | $\epsilon c$ | Tension Steel Yield | Compression Steel Yield |
-| ----------------------- | ----------------- | ------------ | ------------------- | ----------------------- |
-| 37.5                    | 7.124e-07         |              |                     |                         |
-| 37.5                    | 8.530e-07         |              |                     |                         |
-| 130.19                  | 2.099e-06         | 0.00048      |                     |                         |
-| ***For 0 < ⲉc < ⲉo***   |                   |              |                     |                         |
-| 196.57                  | 3.05e-06          | 0.00069      | False               | False                   |
-| 264.6                   | 4.02e-06          | 0.00089      | False               | False                   |
-| 331.44                  | 4.97e-06          | 0.00109      | False               | False                   |
-| 394.8                   | 5.91e-06          | 0.00129      | False               | False                   |
-| 452.77                  | 6.81e-06          | 0.00149      | False               | False                   |
-| ***For ⲉo < ⲉc < ⲉcu*** |                   |              |                     |                         |
-| 509.46                  | 1.024e-05         | 0.00196      | True                | True                    |
-| 510.23                  | 1.17e-05          | 0.00216      | True                | True                    |
-| 510.76                  | 1.316e-05         | 0.00236      | True                | True                    |
-| 511.14                  | 1.462e-05         | 0.00256      | True                | True                    |
-| 511.42                  | 1.608e-05         | 0.00276      | True                | True                    |
-| 511.64                  | 1.754e-05         | 0.00296      | True                | True                    |
-
-
-
-![](/Users/syncster31/Documents/Masteral/masteral-advanced-concrete-design/Notebooks/Problem Set 1/output_4_0.png)
-
-
+Note that the snippet above is part of the **Case 4** of this problem.
 
 ### IV. Comments
 
@@ -421,7 +166,6 @@ Following are comments and findings in this problem set.
 ##### References
 
 - Gillesania, DI T., *Simplified Reinforced Concrete Design*, Diego Innocencio Tapang Guillesania, 2013
-- Ćurić, I., Radić, J., Franetović, M., *DETERMINATION OF THE BENDING MOMENT – CURVATURE RELATIONSHIP FOR REINFORCED CONCRETE HOLLOW SECTION BRIDGE COLUMNS*, n.d.
 - American Concrete Institute, *Building Code Requirements for Structural Concrete (ACI 318-95) and Commentary (ACI 318R-95)*, 1995
 - Nilson, A. H., Darwin, D., Dolan, C. W., *Design of Concrete Structures 14th ed.*, McGraw-Hill, 2010, Retrieved from http://www.engineeringbookspdf.com
 
@@ -431,7 +175,7 @@ Following are comments and findings in this problem set.
 
 ##### Source Code
 
-The programming language used in this problem set is **Python3** with the help of **Jupyter Notebook** for presenting the data. The full source code used is shown below. This source code is also available at github (https://github.com/alexiusacademia/masteral-advanced-concrete-design/blob/master/Notebooks/Problem%20Set%201.ipynb)
+The programming language used in this problem set is **Python3** with the help of **Jupyter Notebook** for presenting the result. The full source code used is shown below. This source code is also available at github (https://github.com/alexiusacademia/masteral-advanced-concrete-design/blob/master/Notebooks/Problem%20Set%201.ipynb)
 
 ```python
 # Imports
