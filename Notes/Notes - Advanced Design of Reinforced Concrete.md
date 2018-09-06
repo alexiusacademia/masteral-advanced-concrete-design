@@ -126,7 +126,7 @@ Note that test result for modulus of rupture and the one calculated from $fr = \
 
 Modulus of elasticity of concrete varies with strength, unlike that of steel. For normal weight concrete, ACI-8.5.1 suggests
 $$
-Ec = 5,700\sqrt{f'c}
+Ec = 57,000\sqrt{f'c}
 $$
 where Ec is in psi, and roughly
 $$
@@ -160,3 +160,158 @@ Volume change of concrete during hardening and curing. This may be controlled by
 
 Varies depending on country. These codes must be adopted by a governing body to be legal.
 
+
+
+#### 2.2 Working Stress Design Method
+
+A structure is designed so that the resulting stress in an element do not exceed a specified allowable stress. This may be expressed by the following expression:
+$$
+f \leq f_{allow}
+$$
+where:
+
+$f = $ an elastic stress calculated, for example by, $f = \dfrac{M_c}{I}$
+
+$f_{allow} = $ a predefined allowable stress given by a design code.
+
+
+
+##### 2.2.3 Obstacles on WSD Method
+
+1. No simple way to account for different degrees of uncertainty of various kinds of loads.
+2. Creep and shrinkage are not easily accounted for by calculation of elastic stress.
+3. Concrete stress is not proportional to strain up to its crushing point.
+
+
+
+#### 2.3 Strength Design Method
+
+Also called *Ultimate Strength Design (USD)* method or *Load Resistance Factor Design (LRFD)*.
+
+The service loads are increased by factors to obtain load at which failure is considered imminent. The resulting loads are called *factored loads*.
+
+The resulting stress in the structure is then proportioned such that strength is reached when factored loads are acting and can be expressed by:
+$$
+strength\ provided \geq strength\ required
+$$
+where:
+
+$strength\ provided = $ computed in accordance to provisions of a building/structural code.
+
+$strngth\ required = $ computed using structural analysis.
+
+
+
+
+
+### Chapter 3: Strength of Rectangular Sections in Bending
+
+#### 3.1 Flexural Behavior and Strength of Rectangular Sections
+
+<figure>
+    <img src="D:\Personal\Masteral\AdvancedConcreteDesign\Notes\images\Simple Beam.jpg" width="600" caption="test"/>
+    <figcaption>Figure 3.1: Simply supported beam with concentrated loads</figcaption></figure>
+
+On a section in Figure 3.1, flexure-induced stresses will cause compression at the top and tension at the bottom. Concrete, which is strong in compression but weak in tension resists the stresses in compression zone at the top while steel is placed at the bottom of the beam to resist tension stress.
+
+<figure><img src="D:\Personal\Masteral\AdvancedConcreteDesign\Notes\images\Stress Distributions in 3 Stages.jpg"> <figcaption>Figure 3.2: Stress distribution at 3 stages</figcaption></figure>
+
+Figure 3.2 above shows stress distributions of a singly reinforced concrete beam in three (3) different stages of its behavior.
+
+1. Stage 1 (Figure 3.2 - a) - shows linear stress distribution in compression down to tension zone. This is also known as *elastic-uncrack stage*.
+2. Stage 2 (Figure 3.2 - b) - shows a nonlinear stress distribution and that neutral axis goes higher towards compression zone. This is known as *elastic-crack stage* where concrete in tension area has already reached its cracking capacity.
+3. Stage 3 (Figure 3.2 - c) - neutral axis has moved higher as cracks at the bottom grows. This is also the *inelastic stage*.
+
+
+
+##### Basis of Nominal Strength
+
+<figure><img src="D:\Personal\Masteral\AdvancedConcreteDesign\Notes\images\BeamStressDiagram.jpg" /><figcaption>Figure 3.3: Beam Nominal Stress Diagram</figcaption></figure>
+
+On the diagram shown above,
+
+| Symbol          | Value                                                        |
+| --------------- | ------------------------------------------------------------ |
+| $\epsilon_{cu}$ | crushing strain of concrete                                  |
+| $\epsilon_s$    | strain at steel tension                                      |
+| $d$             | effective depth of beam                                      |
+| $b$             | width of the beam section                                    |
+| $kd$            | the distance from neutral axis to extreme compression fiber  |
+| $Lo$            | the product of constants $k1$ and $k3$                       |
+| $As$            | Area of steel reinforcement                                  |
+| $fy$            | yield strength of steel                                      |
+| $f'c$           | compressive strength of concrete                             |
+| $k2$            | shape factor for the stress diagram and dictates the location of compression force resultant based on $kd$ |
+
+Basis:
+
+1. It has been assumed that plane section remains plane after bending up to failure of the beam. This assumption is for homogeneous elastic beams but has also been verified using tests to be good even for cracked, reinforced concrete beams at nominal strength.
+2. On average (not true on a local cracked section), it is found that the bond of steel and concrete works well.
+
+The nominal strength of the beam is reached when the strain at the extreme compression fiber reached $\epsilon_{cu}$. And this is when the beam fails.
+$$
+Mn = As \cdot fy \cdot (d - k2\cdot kd)
+$$
+
+$$
+
+$$
+
+
+
+
+
+#### 3.2 Whitney Rectangular Stress Distribution
+
+<figure><img src="D:\Personal\Masteral\AdvancedConcreteDesign\Notes\images\WhitneyRectangular.jpg" /><figcaption>Figure 3.4: Whitney Equivalent Stress Block</figcaption></figure>
+
+#### 3.3 Design of Section in Bending
+
+##### 3.3.1 Maximum Steel Ratios ($\rho_{max}$):
+
+
+
+1. Singly Reinforced Beams
+   $$
+   \rho_{max} = 0.75\cdot \rho_{bal}
+   $$
+   This is just a traditional requirement to ensure that steel yields first.
+
+   Note: A more direct way of controlling ductility is to provide maximum value of neutral axis, $kd$. ACI-B.10.3.3 shows that for singly reinforced beams,
+   $$
+   kd_{max} = 0.75\cdot kd_{bal}
+   $$
+
+2. Doubly Reinforced Beams
+
+   For ductility requirements, it is much more appropriate to follow and limit $kd$ to $0.75\cdot kd$.
+
+
+
+### Chapter 4: Shear Strength and Shear Reinforcement
+
+Shear failure or *Diagonal Tension* on beams is difficult to predict accurately.
+
+Shear failure may be more catastrophic than flexure failure. A concrete beam without proper design of shear reinforcement could fail and collapse suddenly without any warning. Unlike in flexure, an under reinforced beam will show signs before failure like cracking, large deflections, and so they can be sometimes be applied with corrective measures.
+
+#### 4.1 Methods of Shear Design
+
+##### 4.1.1 Variable Angle Truss Model
+
+##### 4.1.2 Diagonal Compression Field Theory
+
+##### 4.1.3 Modified Compression Field Theory
+
+
+
+> Large bending moments reduces the shear force at which diagonal cracks form to roughly half of the value is the moment is zero or nearly zero.
+
+It is evident then that shear at which diagonal cracks are developed depends on ratio of shear force to bending moment.
+
+#### 4.2 Behavior of Diagonally Cracked Beams
+
+1. The crack, once formed, spreads, traversing the entire beam from tension to compression face splitting it in two.
+
+   Because of this, it's a good practice to provide minimum shear reinforcement even if it's not required by calculations as they prevents cracks to grow.
+
+2. Sometimes, diagonal cracks formed and spread up to compression zone then stops and not make it to the compression face. In this case, there is no sudden collapse by this failure.
