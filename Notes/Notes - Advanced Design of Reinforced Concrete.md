@@ -220,7 +220,7 @@ Figure 3.2 above shows stress distributions of a singly reinforced concrete beam
 
 1. Stage 1 (Figure 3.2 - a) - shows linear stress distribution in compression down to tension zone. This is also known as *elastic-uncrack stage*.
 2. Stage 2 (Figure 3.2 - b) - shows a nonlinear stress distribution and that neutral axis goes higher towards compression zone. This is known as *elastic-crack stage* where concrete in tension area has already reached its cracking capacity.
-3. Stage 3 (Figure 3.2 - c) - neutral axis has moved higher as cracks at the bottom grows. This is also the *inelastic stage*.
+3. Stage 3 (Figure 3.2 - c) - neutral axis has moved higher as cracks at the bottom grows. This is known as the *inelastic stage*.
 
 
 
@@ -287,6 +287,104 @@ $$
    For ductility requirements, it is much more appropriate to follow and limit $kd$ to $0.75\cdot kd$.
 
 
+
+#### 3.4 Analysis of a Reinforced Concrete Beams at Various Stages
+
+##### 3.4.1 Uncrack - Elastic Stage
+
+Stage just before the concrete cracks at tension fiber.
+
+In this stage, as also shown in Figure 3.3 (a), stress distribution is linear. Finding $kd$ at this stage is as simple as calculation of centroid of the transformed section.
+
+<figure><img src="D:\Personal\Masteral\AdvancedConcreteDesign\Notes\images\UncrackSection.jpg" /> <figcaption>Figure 3.5: Transformed uncrack section</figcaption></figure>
+
+1. Calculate the total area of the transformed uncracked concrete by
+   $$
+   Ac = b \cdot h + (\eta - 1)\cdot As
+   $$
+   where:
+
+   $Ac - $ total area of transformed uncracked concrete
+
+   $h - $ total height of the beam section
+
+   $\eta -$ modular ratio $(\dfrac{Es}{Ec})$
+
+   $Es - $ modulus of elasticity of steel, $200x10^3 MPa$
+
+   $Ec - $ secant modulus of concrete taken up to $fc = 0.5f'c$, $Ec = 4,700\sqrt{f'c}$
+
+   $As - $area of steel
+
+2. Now calculate the total moments of areas to the top of section
+   $$
+   Ma = b\cdot h\cdot \dfrac{h}{2} + (\eta-1)\cdot As\cdot d
+   $$
+   where:
+
+   $Ma - $ moments of areas of concrete and transformed steel
+
+3. We can now calculate $kd$ by summation of moments:
+   $$
+   Ac\cdot kd = Ma
+   $$
+
+   $$
+   kd = \dfrac{Ma}{Ac}
+   $$
+
+4. Solving for the stress at cracking, modulus of rupture,
+   $$
+   fct = 0.6\sqrt{f'c}
+   $$
+   (Section 1.7)
+
+5. There are 2 ways to solve for the cracking moment now that $kd$ is solved. Either by using the formula
+   $$
+   M_{cr} = \dfrac{fct \cdot Ic}{h-kd}
+   $$
+   which was derived from 
+   $$
+   f = \dfrac{M\cdot y}{I}
+   $$
+   or by using equilibrium and take moment to centroid of compression block using the figure below
+
+   <figure><img src="D:\Personal\Masteral\AdvancedConcreteDesign\Notes\images\UncrackStressDiagram.jpg" style="display: block; width: 60%; margin: auto auto;"/><figcaption>Figure 3.6 Uncrack Beam Stress Diagram</figcaption></figure>
+
+   By taking moment to the compression block,
+   $$
+   M_{cr} = Tc\cdot (h - \dfrac{kd}{3} - \dfrac{h - kd}{3}) + Ts\cdot (d- \dfrac{kd}{3})
+   $$
+   we should obtain values very close or the same as from eq. (14).
+
+6. After this is the crack stage, where the stress block is no longer linear Figure 3.2 (b), but the behavior is still elastic. That is when strain at concrete $\epsilon_c$ is less than the elastic limit $\epsilon_o$.
+
+   <figure><img src="D:\Personal\Masteral\AdvancedConcreteDesign\Notes\images\StressDiagramElastic.jpg" style="display: block; width: 50%; margin: auto auto;" /><figcaption>Figure 3.7 Stress Diagram for Crack Elastic Stage</figcaption></figure>
+
+   So at any value of $\epsilon_c$ at this range, we can use the following formulas in calculating the moment.
+   $$
+   k_2 = \dfrac{1}{4}\cdot \dfrac{(4 - \lambda_o)}{(3 - \lambda_o)}
+   $$
+
+   $$
+   \lambda_o = \dfrac{\epsilon_c}{\epsilon_o}
+   $$
+
+   $$
+   L_o = \dfrac{0.85}{3}\cdot \lambda_o \cdot (3 - \lambda_o)
+   $$
+
+   $$
+   fc = 0.85\cdot f'c \cdot (2\lambda_o - \lambda_o^2)
+   $$
+
+   At this stage, $kd$ is still unknown. We solve for $kd$ assuming steel yields, then we solve for $fs$ to check.
+   $$
+   fs = E_s \cdot \epsilon_c \cdot \dfrac{(d - kd)}{kd}
+   $$
+   If steel does not yield, we know that our assumption is not correct and the value of $kd$ we solve as well is not. We re-calculate for $kd$ by using equilibrium equation replacing $fs$ in the equation in terms of $kd$, so that we solve it using quadratic equation.
+
+7. zxfv
 
 ### Chapter 4: Shear Strength and Shear Reinforcement
 
