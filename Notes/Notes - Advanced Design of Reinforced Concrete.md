@@ -378,13 +378,22 @@ In this stage, as also shown in Figure 3.3 (a), stress distribution is linear. F
    fc = 0.85\cdot f'c \cdot (2\lambda_o - \lambda_o^2)
    $$
 
+   $$
+   Lo\cdot fc \cdot kd \cdot b = As\cdot fs
+   $$
+
+
+
+
+
+
    At this stage, $kd$ is still unknown. We solve for $kd$ assuming steel yields, then we solve for $fs$ to check.
-   $$
+$$
    fs = E_s \cdot \epsilon_c \cdot \dfrac{(d - kd)}{kd}
-   $$
+$$
    If steel does not yield, we know that our assumption is not correct and the value of $kd$ we solve as well is not. We re-calculate for $kd$ by using equilibrium equation replacing $fs$ in the equation in terms of $kd$, so that we solve it using quadratic equation.
 
-7. zxfv
+7. (To be continued...)
 
 ### Chapter 4: Shear Strength and Shear Reinforcement
 
@@ -392,13 +401,83 @@ Shear failure or *Diagonal Tension* on beams is difficult to predict accurately.
 
 Shear failure may be more catastrophic than flexure failure. A concrete beam without proper design of shear reinforcement could fail and collapse suddenly without any warning. Unlike in flexure, an under reinforced beam will show signs before failure like cracking, large deflections, and so they can be sometimes be applied with corrective measures.
 
-#### 4.1 Methods of Shear Design
+<figure><img src="D:\Personal\Masteral\AdvancedConcreteDesign\Notes\images\ShearDerivation.jpg" style="display: block; width: 70%; margin: auto auto;"/><figcaption>Figure 4.1 Shear Stress Derivation</figcaption></figure>
 
-##### 4.1.1 Variable Angle Truss Model
+#### 4.1 Shear Formula Derivation
 
-##### 4.1.2 Diagonal Compression Field Theory
+To initially derive the formula for horizontal shear stress $\nu$, we base it in the figure above. *(Note that these assumptions are based on the uncrack section due to failure, hence the triangular stress distribution)*
 
-##### 4.1.3 Modified Compression Field Theory
+First would be summation of horizontal forces $\sum F = 0$:
+$$
+C_1 + \nu_y\cdot b\cdot dz = C_2
+$$
+
+Taking the trapezoidal part of stress blocks,
+$$
+C_1 = \dfrac{f_{c1} + f_{cy1}}{2} \cdot (kd - y)
+$$
+similarly,
+$$
+C_2 = \dfrac{f_{c2} + f_{cy2}}{2} \cdot (kd - y)
+$$
+by similar triangles,
+$$
+\dfrac{f_{cy1}}{y} = \dfrac{f_{c1}}{kd}
+$$
+
+$$
+f_{cy1} = \dfrac{f_{c1}\cdot y}{kd}
+$$
+
+equation (24) now becomes
+$$
+C_1 = \dfrac{f_{c1} + \dfrac{f_{c1}\cdot y}{kd}\cdot b\cdot (kd - y)}{2}
+$$
+
+$$
+C_1 = \dfrac{1}{2}\cdot f_{c1}\cdot kd\cdot b\cdot [1 - (\dfrac{y}{kd})^2]
+$$
+
+By taking moment of the compression solid to the steel tension reinforcement, we got an internal moment $M_1$ or $M_2$ depending on the direction. Let's say we consider $M1$ first.
+$$
+M_1 = C_c \cdot d
+$$
+where:
+
+$C_c = \dfrac{1}{2}\cdot f_{c1} \cdot kd \cdot b$
+
+Rewriting equation (30),
+$$
+\dfrac{M_1}{d} = \dfrac{1}{2}\cdot f_{c1} \cdot kd \cdot b
+$$
+Inserting equation (31) to (29):
+$$
+C_1 = \dfrac{M_1}{d}\cdot [1 - (\dfrac{y}{kd})^2]
+$$
+similarly,
+$$
+C_2 = \dfrac{M_2}{d}\cdot [1 - (\dfrac{y}{kd})^2]
+$$
+Now going back to equation (23):
+$$
+\nu_y \cdot b \cdot d_z = C_2 - C_1
+$$
+substituting equation (32) and (33) into (34):
+$$
+\nu_y = \dfrac{M_2 - M_1}{b\cdot d_z\cdot d}\cdot [1 - (\dfrac{y}{kd})^2]
+$$
+Now if we take the resultant of $M2 - M1$ and divide it to the width of the element, we have the shear force $V$.
+$$
+\nu_y = \dfrac{V}{b\cdot d}\cdot [1-(\dfrac{y}{kd})^2]
+$$
+Now we have the value for the horizontal shear and remember that the vertical shear stress must be equal to this as 
+
+<figure><img src="D:\Personal\Masteral\AdvancedConcreteDesign\Notes\images\ShearElement.jpg" style="display: block; width: 25%; margin: auto auto;"/><figcaption>Figure 4.2 Beam Element with Pure Shear</figcaption></figure>
+
+See that if we get the shear stress at neutral axis, at $y = 0$, we get
+$$
+\nu = \dfrac{V}{b\cdot d}
+$$
 
 
 
@@ -413,3 +492,34 @@ It is evident then that shear at which diagonal cracks are developed depends on 
    Because of this, it's a good practice to provide minimum shear reinforcement even if it's not required by calculations as they prevents cracks to grow.
 
 2. Sometimes, diagonal cracks formed and spread up to compression zone then stops and not make it to the compression face. In this case, there is no sudden collapse by this failure.
+
+#### 4.3 Behavior of Beams without Shear Reinforcement
+
+##### 4.3.1 Mechanisms for Transfer of Shear
+
+1. Shear resistance of the uncracked concrete, $V_{cz}$
+2. Aggregate interlock
+3. Dowel action, $V_d$, resistance of flexure reinforcement
+4. Arch action (for deep beams)
+
+##### 4.3.2 Types of Shear Crack
+
+1. Web-shear crack - inclined crack on beams due to flexure
+2. Flexure-shear crack - inclined crack originating at the top and becoming an extension to an existing flexural crack
+3. Initiating crack - critical flexural crack
+4. Secondary crack - forms along the tensile reinforcement
+
+##### 4.3.3 Shear and Flexural Stress
+
+May be expressed as follows
+$$
+\nu = k1\cdot \dfrac{V}{bd}
+$$
+
+$$
+f_t = k2\cdot \dfrac{M}{bd^2}
+$$
+
+where:
+
+$k1$ and $k2$ are proportionality constants
