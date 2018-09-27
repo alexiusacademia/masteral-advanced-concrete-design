@@ -54,6 +54,7 @@ vcs = []                    # Values of Vc (detailed) at every point
 vus = []                    # Values of Vu at every point (envelope)
 beam = []                   # Ordinate of beam element at every point
 vus_full = []               # Values of Vu (full factored loading)
+mus = []
 
 # Initialize at x = 0
 x = 0
@@ -62,6 +63,7 @@ for i in range(1, no_of_increment+1):
     vu_full = r_a * (a - x) / a
     vu = r_be + ((r_a - r_be) / a) * (a - x)
     mu = (r_a + vu) / 2 * x
+    mus.append(mu / 1000 ** 2)
 
     if (vu * d > mu):
         mu = vu * d
@@ -74,6 +76,7 @@ for i in range(1, no_of_increment+1):
     simp.append(vc_simplified / 1000)
     beam.append(0)
     vus_full.append(vu_full / 1000)
+
 
     x = increment * i
 
@@ -92,6 +95,7 @@ detailed, = plt.plot(xs, vcs, label='Detailed')
 simplified, = plt.plot(xs, simp, label='Simplified')
 vu, = plt.plot(xs, vus, '-', label='Vu (Envelop)', color='red')
 vu_full, = plt.plot(xs, vus_full, '--', label='Vu (Full factored loading)', color='magenta')
+## moments, = plt.plot(xs, mus, label='Mu', color='gray')
 plt.legend(handles=[axis, detailed, simplified, vu, vu_full], loc='best', fontsize=14)
 
 # ----------------------------------------------
@@ -104,12 +108,14 @@ v_full_text = "Vu for full \nfactored loading"
 v_max_text = "Vu(max) = " + str(r_a / 1000)
 text_detailed = "Vc using \ndetailed method"
 text_simplified = "Vc using \nsimplified method"
+text_rho = u'\u03C1' + " = " + str(round(As / (b * d), 4))
 
 # Points
 pt_detailed = (a / 1000 / 2, vcs[int(no_of_increment / 2)])
 pt_simplified = (a / 1000 / 3, simp[int(no_of_increment / 3)])
 pt_vu_full = (3, 350)
 
+plt.text(0, 10, text_rho, fontsize=16)
 plt.text(a / 1000, r_be / 1000, v_envelope_text)
 plt.text(0, r_a / 1000, v_max_text)
 plt.annotate('Straight line approximation \nof maximum shear envelop Vu \ndue to factored live load',
