@@ -11,11 +11,11 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="spiral_interaction_diagram.py" pinned="false" current-in-tab="true">
+      <file leaf-file-name="spiral_interaction_diagram.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/spiral_interaction_diagram.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="230">
-              <caret line="50" column="35" selection-start-line="50" selection-start-column="35" selection-end-line="50" selection-end-column="35" />
+            <state relative-caret-position="-237">
+              <caret line="22" column="13" selection-start-line="22" selection-start-column="13" selection-end-line="22" selection-end-column="13" />
               <folding>
                 <element signature="e#0#11#0" expanded="true" />
               </folding>
@@ -23,11 +23,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="vertical_distance.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/func/vertical_distance.py">
+      <file leaf-file-name="integral.py" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/func/integral.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="210">
-              <caret line="14" column="12" selection-start-line="14" selection-start-column="12" selection-end-line="14" selection-end-column="12" />
+            <state relative-caret-position="275">
+              <caret line="45" lean-forward="true" selection-start-line="45" selection-end-line="45" />
             </state>
           </provider>
         </entry>
@@ -46,6 +46,7 @@
       <list>
         <option value="$PROJECT_DIR$/func/vertical_distance.py" />
         <option value="$PROJECT_DIR$/spiral_interaction_diagram.py" />
+        <option value="$PROJECT_DIR$/func/integral.py" />
       </list>
     </option>
   </component>
@@ -174,11 +175,18 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/spiral_interaction_diagram.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="230">
-          <caret line="50" column="35" selection-start-line="50" selection-start-column="35" selection-end-line="50" selection-end-column="35" />
+        <state relative-caret-position="-237">
+          <caret line="22" column="13" selection-start-line="22" selection-start-column="13" selection-end-line="22" selection-end-column="13" />
           <folding>
             <element signature="e#0#11#0" expanded="true" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/func/integral.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="275">
+          <caret line="45" lean-forward="true" selection-start-line="45" selection-end-line="45" />
         </state>
       </provider>
     </entry>

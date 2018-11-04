@@ -1,5 +1,6 @@
 import math
 from func.vertical_distance import *
+from func.integral import *
 
 # = = = = = = = = = = = = = = = = = = = = = = #
 #              Input parameters               #
@@ -16,6 +17,10 @@ bar_qty = 8
 
 # Steel to concrete ratio to be created with interaction diagram
 rho_collection = [.01]  #, .02, .03, .04, .05, .06, .07, .08]
+
+# Materials parameters
+fy = 415
+fc_prime = 21
 
 # = = = = = = = = = = = = = = = = = = = = = = #
 #           Calculated parameters             #
@@ -47,6 +52,8 @@ for i in range(len(rho_collection)):
     bars_area = rho_collection[i] * gross_area
     bar_area = bars_area / bar_qty
     print("= = = = rho : " + str(rho_collection[i]) + " = = = = = = =")
+
     for j in range(bar_qty):
         print("As # = " + str(j + 1) +
               " | Dist. from Top = " + str(round(bar_distances[j], 4)))
+
