@@ -41,5 +41,3 @@ def compression_centroid_from_top(r, y1):
     return r - moment_area / area
 
 
-def pna(r, bar_qty, bar_area, gamma):
-    pass
