@@ -44,4 +44,3 @@ def compression_centroid_from_top(r, y1):
 
     return r - moment_area / area
 
-
