@@ -15,6 +15,8 @@ def compression_area(r, y1):
 
     for i in range(int(iteration)):
         y = r - (i * dy)
+        if abs(y) > r:
+            break
         strip = math.sqrt(r**2 - y**2) * dy * 2
         area += strip
 
@@ -35,6 +37,8 @@ def compression_centroid_from_top(r, y1):
 
     for i in range(int(iteration)):
         y = r - (i * dy)
+        if abs(y) > r:
+            break
         m_a = math.sqrt(r**2 - y**2) * y * dy * 2
         moment_area += m_a
 
