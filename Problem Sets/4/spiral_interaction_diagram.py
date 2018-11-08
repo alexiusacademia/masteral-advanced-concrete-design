@@ -2,6 +2,8 @@ from func.utilities import *
 from func.integral import *
 from func.stresses import *
 import matplotlib.pyplot as plt
+from matplotlib.ticker import MultipleLocator
+import matplotlib.axes as axes
 
 # = = = = = = = = = = = = = = = = = = = = = = #
 #              Input parameters               #
@@ -14,7 +16,7 @@ h = 1.0
 gamma = 0.8
 
 # Number of bars, minimum of 8 bars
-bar_qty = 10
+bar_qty = 12
 
 # Steel to concrete ratio to be created with interaction diagram
 rho_collection = [.01, .02, .03, .04, .05, .06, .07, .08]
@@ -62,14 +64,17 @@ y_components = []
 
 # Major points
 # --> Balanced condition
-balanced_condition_x = []
-balanced_condition_y = []
+balanced_condition_x = [0.0]
+balanced_condition_y = [0.0]
 # --> Zero strain at tension bar
-et_zero_x = []
-et_zero_y = []
+et_zero_x = [0.0]
+et_zero_y = [0.0]
 # --> Tension at 0.5Fy
-half_fy_x = []
-half_fy_y = []
+half_fy_x = [0.0]
+half_fy_y = [0.0]
+# --> Maximum strain permitted
+max_strain_x = [0.0]
+max_strain_y = [0.0]
 
 # = = = = = = = = = = = = = = = = = = = = = = #
 #              Iterative process              #
@@ -281,20 +286,99 @@ for i in range(len(rho_collection)):
     half_fy_x.append(sum_of_moment * phi / gross_area / h / fc_prime)
     half_fy_y.append(sum_of_forces * phi / gross_area / fc_prime)
 
+    # At maximum strain permitted by code
+    c = 0.003 * farthest / 0.008
+    et = (farthest - c) * 0.003 / c
+    phi = 0.75
+    if et < ety:
+        phi = 0.75
+    elif (et > ety) and (et < 0.005):
+        phi = 0.75 + 0.15 * (et - ety) / (0.005 - ety)
+    else:
+        phi = 0.9
+
+    a = beta_1 * c
+
+    y_cc = pna - compression_centroid_from_top(radius, radius - a)
+    cc = 0.85 * fc_prime * compression_area(radius, radius - a)
+    m_conc = cc * y_cc
+
+    sum_of_forces = cc
+    sum_of_moment = m_conc
+
+    for j in range(bar_qty):
+        fs = get_fs(bar_distances[j], c, fy)
+        fs_corrected = fs if (get_sign(fs) < 0) else (fs - 0.85 * fc_prime)
+        y_rebar = pna - bar_distances[j]
+        f_steel = fs_corrected * bar_area
+        m_steel = f_steel * y_rebar
+        sum_of_forces += f_steel
+        sum_of_moment += m_steel
+
+    max_strain_x.append(sum_of_moment * phi / gross_area / h / fc_prime)
+    max_strain_y.append(sum_of_forces * phi / gross_area / fc_prime)
+
 # = = = = = = = = = = = = = = = = = = = = = = #
 #                   Plotting                  #
 # = = = = = = = = = = = = = = = = = = = = = = #
-plt.figure(figsize=(10, 8))
-plt.title("Dimensionless Interaction Diagram of Spiral Column")
+plt.figure(figsize=(5, 8))
+plt.title("DIMENSIONLESS INTERACTION DIAGRAM\n(SPIRAL COLUMN)")
 plt.xlabel(r"$\dfrac{\phi \cdot M_n}{f'c \cdot A_g \cdot h}$")
 plt.ylabel(r"$\dfrac{\phi \cdot P_n}{f'c \cdot A_g}$")
-plt.grid()
 
+# Grid setting
+h_spacing = 0.01
+v_spacing = 0.1
+minorlocator_x = MultipleLocator(h_spacing)
+minorlocator_y = MultipleLocator(v_spacing)
+plt.gca().xaxis.set_minor_locator(minorlocator_x)
+plt.gca().yaxis.set_minor_locator(minorlocator_y)
+plt.grid(which='minor')
+
+# Texts
+text_balanced_condition = r"$f_s = f_y$"
+text_zero_strain = r"$\epsilon_t = 0$"
+text_half_fy = r"$f_s = \dfrac{1}{2} \cdot f_y$"
+text_max_strain = r"$\epsilon_t = 0.005$"
+
+# Text plots
+plt.text(balanced_condition_x[len(balanced_condition_x) - 1],
+         balanced_condition_y[len(balanced_condition_y) - 1],
+         text_balanced_condition, fontsize=14)
+plt.text(et_zero_x[len(et_zero_x) - 1],
+         et_zero_y[len(et_zero_y) - 1],
+         text_zero_strain, fontsize=14)
+plt.text(half_fy_x[len(half_fy_x) - 1],
+         half_fy_y[len(half_fy_y) - 1],
+         text_half_fy, fontsize=14)
+plt.text(max_strain_x[len(max_strain_x) - 1],
+         max_strain_y[len(max_strain_y) - 1],
+         text_max_strain, fontsize=14)
+
+farthest_moment = farthest_distance(x_components[len(x_components) - 1])
+highest_axial = farthest_distance(y_components[len(y_components) - 1])
+legend_location_x = farthest_moment
+legend_location_y = highest_axial
+
+# Change the axis limit in x-direction
+# axes.Axes.set_xlim(right=farthest_moment * 2)
+plt.xlim(right=farthest_moment * 3 / 2)
+
+# Curves
 plt.plot(balanced_condition_x, balanced_condition_y, ':')
 plt.plot(et_zero_x, et_zero_y, ':')
 plt.plot(half_fy_x, half_fy_y, ':')
+plt.plot(max_strain_x, max_strain_y, ':')
 
+# Plot of curves
 for i in range(len(x_components)):
     i, = plt.plot(x_components[i], y_components[i])
+
+# Texts for rho
+for j in range(len(rho_collection)):
+    text_rho = r"$\rho=$" + str(round(rho_collection[j] * 100, 0)) + "%"
+    text_coord_x = x_components[j][2]
+    text_coord_y = y_components[j][2]
+    plt.text(text_coord_x, text_coord_y, text_rho, backgroundcolor=(1, 1, 1), fontsize=9)
 
 plt.show()
