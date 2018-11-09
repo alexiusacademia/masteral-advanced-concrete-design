@@ -3,7 +3,6 @@ from func.integral import *
 from func.stresses import *
 import matplotlib.pyplot as plt
 from matplotlib.ticker import MultipleLocator
-import matplotlib.axes as axes
 
 # = = = = = = = = = = = = = = = = = = = = = = #
 #              Input parameters               #
@@ -19,11 +18,15 @@ gamma = 0.8
 bar_qty = 12
 
 # Steel to concrete ratio to be created with interaction diagram
-rho_collection = [.01, .02, .03, .04, .05, .06, .07, .08]
+rho_collection = [.01]#, .02, .03, .04, .05, .06, .07, .08]
 
 # Materials parameters
 fy = 275
 fc_prime = 21
+
+# = = = = = = = = = = = = = = = = = = = = = = #
+#                 For Circular                #
+# = = = = = = = = = = = = = = = = = = = = = = #
 
 # = = = = = = = = = = = = = = = = = = = = = = #
 #           Calculated parameters             #
@@ -120,7 +123,6 @@ for i in range(len(rho_collection)):
     farthest = farthest_distance(bar_distances)
     ety = fy / 200000
     et = (farthest - c) * 0.003 / c
-    et_prev = et
     phi = 0.75
     if et < ety:
         phi = 0.75
@@ -163,6 +165,8 @@ for i in range(len(rho_collection)):
             phi = 0.75 + 0.15 * (et - ety) / (0.005 - ety)
         else:
             phi = 0.9
+        if phi > 0.9:
+            phi = 0.9
 
         a = beta_1 * c
 
@@ -185,9 +189,9 @@ for i in range(len(rho_collection)):
         xs.append(sum_of_moment * phi / gross_area / h / fc_prime)
         ys.append(sum_of_forces * phi / gross_area / fc_prime)
 
-        # print("phi.Mn/(f'c.Ag.h) = " + str(round(sum_of_moment * phi / gross_area / h / fc_prime, 4)) +
-        #      ", phi.Pn/(f'c.Ag) = " + str(round(sum_of_forces * phi / gross_area / fc_prime, 4)) +
-        #      ", Cc arm = " + str(round(y_cc, 10)), ", phi = " + str(round(phi, 4)))
+        #print("phi.Mn/(f'c.Ag.h) = " + str(round(sum_of_moment * phi / gross_area / h / fc_prime, 4)) +
+         #     ", phi.Pn/(f'c.Ag) = " + str(round(sum_of_forces * phi / gross_area / fc_prime, 4)) +
+          #    ", Cc arm = " + str(round(y_cc, 10)), ", phi = " + str(round(phi, 4)))
 
     x_components.append(xs)
     y_components.append(ys)
@@ -202,6 +206,9 @@ for i in range(len(rho_collection)):
         phi = 0.75 + 0.15 * (et - ety) / (0.005 - ety)
     else:
         phi = 0.9
+    if phi > 0.9:
+        phi = 0.9
+
     ab = cb * beta_1
     y_cc = pna - compression_centroid_from_top(radius, radius - ab)
     cc = 0.85 * fc_prime * compression_area(radius, radius - ab)
@@ -231,6 +238,8 @@ for i in range(len(rho_collection)):
     elif (et > ety) and (et < 0.005):
         phi = 0.75 + 0.15 * (et - ety) / (0.005 - ety)
     else:
+        phi = 0.9
+    if phi > 0.9:
         phi = 0.9
 
     a = beta_1 * c
@@ -264,6 +273,8 @@ for i in range(len(rho_collection)):
         phi = 0.75 + 0.15 * (et - ety) / (0.005 - ety)
     else:
         phi = 0.9
+    if phi > 0.9:
+        phi = 0.9
 
     a = beta_1 * c
 
@@ -296,6 +307,8 @@ for i in range(len(rho_collection)):
         phi = 0.75 + 0.15 * (et - ety) / (0.005 - ety)
     else:
         phi = 0.9
+    if phi > 0.9:
+        phi = 0.9
 
     a = beta_1 * c
 
@@ -319,10 +332,119 @@ for i in range(len(rho_collection)):
     max_strain_y.append(sum_of_forces * phi / gross_area / fc_prime)
 
 # = = = = = = = = = = = = = = = = = = = = = = #
+#                For Rectangular              #
+# = = = = = = = = = = = = = = = = = = = = = = #
+hr = 1
+b = hr
+gross_area_rect = hr * b
+rho_rect = [0.01]
+x_components_rect = []
+y_components_rect = []
+sp_rect = (gamma*hr - 2 * d1) / 3
+# For 12 bars
+bar_distances_rect = [d1, d1, d1, d1,
+                      d1+sp_rect,
+                      d1 + sp_rect*2,
+                      d1 + sp_rect*3, d1 + sp_rect*3, d1 + sp_rect*3, d1 + sp_rect*3,
+                      d1 + sp_rect * 2,
+                      d1 + sp_rect]
+
+for j in range(len(rho_rect)):
+    xs = []
+    ys = []
+    bars_area = rho_rect[j] * gross_area_rect
+    bar_area = bars_area / bar_qty
+
+    # Initial values for iteration process
+    c = 0.0001
+    a = beta_1 * c
+    y_cc = a / 2
+    cc = 0.85 * fc_prime * a * b
+    m_conc = cc * y_cc
+
+    # Get the farthest distance and calculate strain
+    farthest = farthest_distance(bar_distances_rect)
+    ety = fy / 200000
+    et = (farthest - c) * 0.003 / c
+    phi = 0.65
+    if et < ety:
+        phi = 0.65
+    elif (et > ety) and (et < 0.005):
+        phi = 0.65 + 0.25 * (et - ety) / (0.005 - ety)
+    else:
+        phi = 0.9
+
+    # Summation of forces initialized to concrete compression
+    sum_of_forces = cc
+
+    # Summarion of moments initialized to concrete bending
+    sum_of_moment = m_conc
+    print("m = ", round(sum_of_moment, 5))
+    # Iterate through each bar
+    for k in range(bar_qty):
+        fs = get_fs(bar_distances_rect[k], c, fy)
+        fs_corrected = fs if get_sign(fs) < 0 else fs - 0.85 * fc_prime
+        y_rebar = hr / 2 - bar_distances_rect[k]
+        f_steel = fs_corrected * bar_area
+        m_steel = f_steel * y_rebar
+        sum_of_forces += f_steel
+        sum_of_moment += m_steel
+
+    xs.append(sum_of_moment * phi / gross_area_rect / hr / fc_prime)
+    ys.append(sum_of_forces * phi / gross_area_rect / fc_prime)
+
+    # Start of iteration
+    # Interval for iteration on c
+    c_interval = 0.05
+    if sum_of_moment < 0:
+        sum_of_moment = 0
+
+    while sum_of_moment >= 0.0:
+        c += c_interval
+
+        # phi calculation
+        et = (farthest - c) * 0.003 / c
+        phi = 0.65
+        if et < ety:
+            phi = 0.65
+        elif (et > ety) and (et < 0.005):
+            phi = 0.65 + 0.25 * (et - ety) / (0.005 - ety)
+        else:
+            phi = 0.9
+        if phi > 0.9:
+            phi = 0.9
+
+        a = beta_1 * c
+
+        y_cc = h/2 - a / 2
+        cc = 0.85 * fc_prime * a * b
+        m_conc = cc * y_cc
+
+        sum_of_forces = cc
+        sum_of_moment = m_conc
+
+        for l in range(bar_qty):
+            fs = get_fs(bar_distances[l], c, fy)
+            fs_corrected = fs if (get_sign(fs) < 0) else (fs - 0.85 * fc_prime)
+            y_rebar = hr/2 - bar_distances_rect[l]
+            f_steel = fs_corrected * bar_area
+            m_steel = f_steel * y_rebar
+            sum_of_forces += f_steel
+            sum_of_moment += m_steel
+
+        xs.append(sum_of_moment * phi / gross_area_rect / hr / fc_prime)
+        ys.append(sum_of_forces * phi / gross_area_rect / fc_prime)
+
+    x_components_rect.append(xs)
+    y_components_rect.append(ys)
+
+
+# = = = = = = = = = = = = = = = = = = = = = = #
 #                   Plotting                  #
 # = = = = = = = = = = = = = = = = = = = = = = #
 plt.figure(figsize=(5, 8))
-plt.title("DIMENSIONLESS INTERACTION DIAGRAM\n(SPIRAL COLUMN)")
+#plt.title("DIMENSIONLESS INTERACTION DIAGRAM\n(SPIRAL COLUMN)")
+plt.title("COMPARISON BETWEEN TIED AND SPIRAL COLUMN")
 plt.xlabel(r"$\dfrac{\phi \cdot M_n}{f'c \cdot A_g \cdot h}$")
 plt.ylabel(r"$\dfrac{\phi \cdot P_n}{f'c \cdot A_g}$")
 
@@ -342,18 +464,18 @@ text_half_fy = r"$f_s = \dfrac{1}{2} \cdot f_y$"
 text_max_strain = r"$\epsilon_t = 0.005$"
 
 # Text plots
-plt.text(balanced_condition_x[len(balanced_condition_x) - 1],
-         balanced_condition_y[len(balanced_condition_y) - 1],
-         text_balanced_condition, fontsize=14)
-plt.text(et_zero_x[len(et_zero_x) - 1],
-         et_zero_y[len(et_zero_y) - 1],
-         text_zero_strain, fontsize=14)
-plt.text(half_fy_x[len(half_fy_x) - 1],
-         half_fy_y[len(half_fy_y) - 1],
-         text_half_fy, fontsize=14)
-plt.text(max_strain_x[len(max_strain_x) - 1],
-         max_strain_y[len(max_strain_y) - 1],
-         text_max_strain, fontsize=14)
+#plt.text(balanced_condition_x[len(balanced_condition_x) - 1],
+#         balanced_condition_y[len(balanced_condition_y) - 1],
+#         text_balanced_condition, fontsize=14)
+#plt.text(et_zero_x[len(et_zero_x) - 1],
+#         et_zero_y[len(et_zero_y) - 1],
+#         text_zero_strain, fontsize=14)
+#plt.text(half_fy_x[len(half_fy_x) - 1],
+#         half_fy_y[len(half_fy_y) - 1],
+#         text_half_fy, fontsize=14)
+#plt.text(max_strain_x[len(max_strain_x) - 1],
+#         max_strain_y[len(max_strain_y) - 1],
+#         text_max_strain, fontsize=14)
 
 farthest_moment = farthest_distance(x_components[len(x_components) - 1])
 highest_axial = farthest_distance(y_components[len(y_components) - 1])
@@ -365,20 +487,29 @@ legend_location_y = highest_axial
 plt.xlim(right=farthest_moment * 3 / 2)
 
 # Curves
-plt.plot(balanced_condition_x, balanced_condition_y, ':')
-plt.plot(et_zero_x, et_zero_y, ':')
-plt.plot(half_fy_x, half_fy_y, ':')
-plt.plot(max_strain_x, max_strain_y, ':')
+#plt.plot(balanced_condition_x, balanced_condition_y, ':')
+#plt.plot(et_zero_x, et_zero_y, ':')
+#plt.plot(half_fy_x, half_fy_y, ':')
+#plt.plot(max_strain_x, max_strain_y, ':')
 
 # Plot of curves
 for i in range(len(x_components)):
-    i, = plt.plot(x_components[i], y_components[i])
+    plt.plot(x_components[i], y_components[i])
+for k in range(len(x_components_rect)):
+    plt.plot(x_components_rect[k], y_components_rect[k], color='r')
 
 # Texts for rho
 for j in range(len(rho_collection)):
-    text_rho = r"$\rho=$" + str(round(rho_collection[j] * 100, 0)) + "%"
+    #text_rho = r"$\rho=$" + str(round(rho_collection[j] * 100, 0)) + "%"
+    text_rho = "Spiral"
     text_coord_x = x_components[j][2]
     text_coord_y = y_components[j][2]
+    plt.text(text_coord_x, text_coord_y, text_rho, backgroundcolor=(1, 1, 1), fontsize=9)
+for m in range(len(rho_rect)):
+    #text_rho = r"$\rho=$" + str(round(rho_collection[j] * 100, 0)) + "%"
+    text_rho = "Tied"
+    text_coord_x = x_components_rect[m][2]
+    text_coord_y = y_components_rect[m][2]
     plt.text(text_coord_x, text_coord_y, text_rho, backgroundcolor=(1, 1, 1), fontsize=9)
 
 plt.show()
